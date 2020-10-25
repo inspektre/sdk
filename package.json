@@ -1,7 +1,7 @@
 {
   "name": "@inspektre/inspektre",
-  "version": "0.0.3",
-  "description": "inspektre.io SDK",
+  "version": "0.0.1",
+  "description": "inspektre cli & SDK package",
   "main": "src/cli.js",
   "bin": {
     "sdk": "src/cli.js"
@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/inspektre/sdk.git"
+    "url": "git+https://github.com/inspektre/inspektre.git"
   },
   "keywords": [
     "inspektre",
@@ -47,7 +47,7 @@
     "automation"
   ],
   "bugs": {
-    "url": "https://github.com/inspektre/sdk/issues"
+    "url": "https://github.com/inspektre/inspektre/issues"
   },
-  "homepage": "https://github.com/inspektre/sdk#readme"
+  "homepage": "https://github.com/inspektre/inspektre#readme"
 }
