@@ -3,6 +3,7 @@
   "version": "0.0.3",
   "description": "inspektre.io CLI",
   "main": "src/cli.js",
+  "bin": "src/cli.js",
   "scripts": {
     "start": "node src/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
