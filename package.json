@@ -35,7 +35,6 @@
     "prompts": "^2.0.4",
     "shapes": "^0.4.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/inspektre/sdk.git"
