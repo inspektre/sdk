@@ -1,5 +1,5 @@
 {
-  "name": "@inspektre/sdk",
+  "name": "@inspektre/inspektre",
   "version": "0.0.3",
   "description": "inspektre.io SDK",
   "main": "src/cli.js",
