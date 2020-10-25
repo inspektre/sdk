@@ -1,13 +1,13 @@
 # Inspektre CLI & SDK 
 This is a mono repo for CLI as well as javascript SDK forInspektre Security Graphs.
 
-## Code Scan
+## Code Quality
 ![CodeQL](https://github.com/inspektre/inspektre/workflows/CodeQL/badge.svg?branch=main)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/inspektre/inspektre.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/inspektre/inspektre/alerts/)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/inspektre/inspektre.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/inspektre/inspektre/context:javascript)
 
 ## Wiki
-`inspektre-cli` Wiki can be found [here](https://github.com/inspektre/sdk/wiki)
+`inspektre-cli` Wiki can be found [here](https://github.com/inspektre/inspektre/wiki)
 
 ## Purpose
 This CLI utility is helpful in performing the following:
