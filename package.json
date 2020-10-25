@@ -1,9 +1,11 @@
 {
-  "name": "inspektre-cli",
+  "name": "@inspektre/sdk",
   "version": "0.0.3",
-  "description": "inspektre.io CLI",
+  "description": "inspektre.io SDK",
   "main": "src/cli.js",
-  "bin": "src/cli.js",
+  "bin": {
+    "sdk": "src/cli.js"
+  },
   "scripts": {
     "start": "node src/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -32,5 +34,21 @@
     "openid-client": "^4.2.0",
     "prompts": "^2.0.4",
     "shapes": "^0.4.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inspektre/sdk.git"
+  },
+  "keywords": [
+    "inspektre",
+    "appsec",
+    "threathunting",
+    "shift-left",
+    "automation"
+  ],
+  "bugs": {
+    "url": "https://github.com/inspektre/sdk/issues"
+  },
+  "homepage": "https://github.com/inspektre/sdk#readme"
 }
