@@ -4,7 +4,7 @@ CLI for Inspektre Security Graphs.
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/inspektre/cli.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/inspektre/cli/alerts/) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/inspektre/cli.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/inspektre/cli/context:javascript) ![Inspektre-CLI Build](https://github.com/inspektre/cli/workflows/Inspektre-CLI%20Build/badge.svg?branch=main)
 
 ## Wiki
-`inspektre-cli` Wiki can be found [here](https://github.com/inspektre/cli/wiki)
+`inspektre-cli` Wiki can be found [here](https://github.com/inspektre/sdk/wiki)
 
 ## Purpose
 This CLI utility is helpful in performing the following:
