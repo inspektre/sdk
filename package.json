@@ -1,0 +1,40 @@
+{
+  "name": "inspektre-cli",
+  "version": "0.0.4",
+  "description": "inspektre.io CLI",
+  "main": "src/cli.js",
+  "scripts": {
+    "start": "node src/cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pkg src/cli.js --out-path builds",
+    "rename": "mv builds/cli-win.exe builds/inspektre-cli-win.exe && mv builds/cli-linux builds/inspektre-cli-linux && mv builds/cli-macos builds/inspektre-cli-macos",
+    "build:debug": "pkg src/cli.js --out-path debug --debug",
+    "codegen": "graphql-codegen --config codegen.yml"
+  },
+  "author": "Uday Korlimarla",
+  "license": "MIT",
+  "engines": {
+    "node": ">=v14.13.0"
+  },
+  "dependencies": {
+    "apollo-boost": "^0.4.9",
+    "chalk": "^4.1.0",
+    "commander": "^6.1.0",
+    "dotenv": "^8.2.0",
+    "figures": "^3.2.0",
+    "got": "^9.6.0",
+    "graphql": "^15.3.0",
+    "graphql-tag": "^2.11.0",
+    "js-yaml": "^3.14.0",
+    "node-fetch": "^2.6.1",
+    "open": "^6.2.0",
+    "openid-client": "^4.2.0",
+    "prompts": "^2.0.4",
+    "shapes": "^0.4.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.17.10",
+    "@graphql-codegen/fragment-matcher": "1.17.8",
+    "@graphql-codegen/introspection": "1.18.0"
+  }
+}
