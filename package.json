@@ -1,6 +1,6 @@
 {
   "name": "inspektre-cli",
-  "version": "0.0.4",
+  "version": "0.0.3",
   "description": "inspektre.io CLI",
   "main": "src/cli.js",
   "scripts": {
@@ -31,10 +31,5 @@
     "openid-client": "^4.2.0",
     "prompts": "^2.0.4",
     "shapes": "^0.4.0"
-  },
-  "devDependencies": {
-    "@graphql-codegen/cli": "1.17.10",
-    "@graphql-codegen/fragment-matcher": "1.17.8",
-    "@graphql-codegen/introspection": "1.18.0"
   }
 }
