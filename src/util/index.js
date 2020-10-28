@@ -48,7 +48,7 @@ const authLink = new ApolloLink((operation, forward) => {
   const token = readAuthConfig().inspektre_access_token;
   operation.setContext({
     headers: {
-      authorization: token ? `Bearer ${token}` : process.env.inspektre_access_token
+      authorization: token ? `Bearer ${token}` : `Bearer ${process.env.inspektre_access_token}`
     }
   });
   // Call the next link in the middleware chain.
