@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const { ApolloClient, InMemoryCache, HttpLink, ApolloLink } = require('apollo-boost');
 const fetch = require('node-fetch');
 const { handleErrors } = require('./errors');
-
+const dotenv = require('dotenv');
 
 // Initialize Configuration files
 // Set silent=true if STDOUT needs to be suppressed
@@ -48,7 +48,7 @@ const authLink = new ApolloLink((operation, forward) => {
   const token = readAuthConfig().inspektre_access_token;
   operation.setContext({
     headers: {
-      authorization: token ? `Bearer ${token}` : ''
+      authorization: token ? `Bearer ${token}` : process.env.inspektre_access_token
     }
   });
   // Call the next link in the middleware chain.
