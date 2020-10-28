@@ -118,7 +118,7 @@ const Auth = (async (verbose, headless) => {
     console.log(figures.main.tick, "Device is now authorized");
     // console.log('\n\nresult tokens', { ...tokens });
     const { access_token, refresh_token} = tokens;
-    writeAuthConfig({ access_token, refresh_token });
+    writeAuthConfig({ inspektre_access_token: access_token, inspektre_refresh_token: refresh_token });
     // To Observe claims -> tokens.claims()
     // To get user info ->  await client.userinfo(tokens)
   }
@@ -135,12 +135,12 @@ const Refresh = async (verbose) => {
       body: {
           grant_type: 'refresh_token',
           client_id: process.env.CLIENT_ID,
-          refresh_token: localAuthData.refresh_token
+          refresh_token: localAuthData.inspektre_refresh_token
       },
   });
 
   if(data) {
-    writeAuthConfig({ access_token: data.body.access_token, refresh_token: data.body.refresh_token });
+    writeAuthConfig({ inspektre_access_token: data.body.access_token, inspektre_refresh_token: data.body.refresh_token });
     if(verbose) {
       console.log("Refreshing Authentication for the device was successful");
     }

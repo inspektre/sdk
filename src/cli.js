@@ -7,12 +7,13 @@ const figures = require('figures');
 const chalk = require('chalk');
 const packageJson = require('../package.json');
 const { Auth, Refresh } = require('./auth');
-const { initConfig } = require('./util');
+const { initConfig, fileExists } = require('./util');
 const { getProjects, getProject, getAttackByTag } = require('./queries');
 const { getAttackBySeverity, getAttackByLikelihood, getAttackByLikelihoodAndSeverity } = require('./queries');
 const { getAttackByTagLikelihood, getAttackByTagSeverity, getAttackByTagSeverityLikelihood } = require('./queries');
 const { getAttackBySkill, getWeaknessesOwasp } = require('./queries');
 const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./mutations');
+const { generateMeta } = require('./inspect');
 
 // Init Commander
 const program = new commander.Command();
@@ -22,7 +23,7 @@ program.storeOptionsAsProperties(true).passCommandToAction(true);
 program.version(packageJson.version);
 program.description('inspektre - cli'.concat(` v${packageJson.version}`));
 
-
+// Version
 program
 .command('version', "Display the version of Inspektre-CLI in use.")
 .action((action) => {
@@ -30,7 +31,19 @@ program
   if(version) {
     console.log('Inspektre-CLI Version: v'.format(packageJson.version));
   }
+});
+
+// Application Inspector
+program
+.command('inpect', 'inspect source-code for security intelligence')
+.option('-f, --file <file>', 'examine security from file')
+.action((action) => {
+  const fileContent = fileExists(action.file);
+  if(fileContent) {
+    generateMeta(fileContent);
+  }
 })
+
 // Intialize
 program
 .command('init')
@@ -39,7 +52,8 @@ program
 .action((options) => {
   const verbose = options.verbose || false;
   initConfig(verbose);
-})
+});
+
 
 // Login Action
 program
@@ -166,7 +180,7 @@ program
   if(tags) {
     getWeaknessesOwasp(tags);
   }
-})
+});
 
 
 if(process.argv.length > 2) {

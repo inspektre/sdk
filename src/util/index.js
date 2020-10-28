@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const { ApolloClient, InMemoryCache, HttpLink, ApolloLink } = require('apollo-boost');
 const fetch = require('node-fetch');
 const { handleErrors } = require('./errors');
-
+const dotenv = require('dotenv');
 
 // Initialize Configuration files
 // Set silent=true if STDOUT needs to be suppressed
@@ -35,7 +35,7 @@ const readAuthConfig = () => {
         let fileContents = fs.readFileSync(path.join(homedir(), '.inspektre', 'auth.yml'), 'utf8');
         data = yaml.safeLoad(fileContents);
     } catch (e) {
-        console.log(figures.main.cross.concat(" ", "Please login to continue."));
+        console.log(figures.main.cross.concat(" Please login to continue."));
         process.exitCode = 1;
     }
     return data;
@@ -45,10 +45,10 @@ const httpLink = new HttpLink({ uri: 'https://api.inspektre.io/', fetch: fetch }
 
 // Create authorization Link middleware
 const authLink = new ApolloLink((operation, forward) => {
-  const token = readAuthConfig().access_token;
+  const token = readAuthConfig().inspektre_access_token;
   operation.setContext({
     headers: {
-      authorization: token ? `Bearer ${token}` : ''
+      authorization: token ? `Bearer ${token}` : process.env.inspektre_access_token
     }
   });
   // Call the next link in the middleware chain.
@@ -61,4 +61,18 @@ const client = new ApolloClient({
     cache: new InMemoryCache()
 });
 
-module.exports = { client, initConfig, writeAuthConfig, readAuthConfig, handleErrors };
+// File Exists
+const fileExists = (file) => {
+    try {
+        if(fs.existsSync(file)) {
+            return require(file);
+        } 
+        return false;
+    } catch (err) {
+        return false;
+    }
+};
+
+// File Contents
+
+module.exports = { client, initConfig, writeAuthConfig, readAuthConfig, handleErrors, fileExists };
