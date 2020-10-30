@@ -42,7 +42,7 @@ program
   if(fileContent) {
     generateMeta(fileContent);
   }
-})
+});
 
 // Intialize
 program

@@ -8,6 +8,8 @@ const fetch = require('node-fetch');
 const { handleErrors } = require('./errors');
 const dotenv = require('dotenv');
 
+dotenv.config();
+
 // Initialize Configuration files
 // Set silent=true if STDOUT needs to be suppressed
 const initConfig = (verbose) => {
