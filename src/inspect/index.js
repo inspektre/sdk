@@ -9,14 +9,14 @@ const supportedNameTags = [
 ];
 
 
-const supportedTypes = [
-    "owasp-2017",
-    "hw",
-    "sw",
-    "software-fault-patterns",
-    "architecture",
-    "top-25"
-];
+// const supportedTypes = [
+//     "owasp-2017",
+//     "hw",
+//     "sw",
+//     "software-fault-patterns",
+//     "architecture",
+//     "top-25"
+// ];
 
 const generateMeta = (data) => {
     const meta = {};
