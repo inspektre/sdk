@@ -33,13 +33,14 @@ program
   }
 });
 
-// Application Inspector
+// Get code-intel from file
 program
-.command('inpect', 'inspect source-code for security intelligence')
+.command('inspect', 'inspect source-code for security intelligence')
 .option('-f, --file <file>', 'examine security from file')
 .action((action) => {
   const fileContent = fileExists(action.file);
-  if(fileContent) {
+  const inspect = action.inspect;
+  if(fileContent && inspect) {
     generateMeta(fileContent);
   }
 });
