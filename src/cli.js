@@ -35,13 +35,15 @@ program
 
 // Get code-intel from file
 program
-.command('inspect', 'inspect source-code for security intelligence')
+.command('inspect')
+.description('inspect source-code for security intelligence')
 .option('-f, --file <file>', 'examine security from file')
-.action((action) => {
-  const fileContent = fileExists(action.file);
-  const inspect = action.inspect;
-  if(fileContent && inspect) {
+.action((options) => {
+  const fileContent = fileExists(options.file);
+  if(fileContent) {
     generateMeta(fileContent);
+  } else {
+    process.stderr.write("No suitable code-intel was passed.\n");
   }
 });
 
