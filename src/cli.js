@@ -13,7 +13,7 @@ const { getAttackBySeverity, getAttackByLikelihood, getAttackByLikelihoodAndSeve
 const { getAttackByTagLikelihood, getAttackByTagSeverity, getAttackByTagSeverityLikelihood } = require('./queries');
 const { getAttackBySkill, getWeaknessesOwasp } = require('./queries');
 const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./mutations');
-const { generateMeta } = require('./inspect');
+const { inspect } = require('./inspect');
 
 // Init Commander
 const program = new commander.Command();
@@ -41,7 +41,7 @@ program
 .action((options) => {
   const fileContent = fileExists(options.file);
   if(fileContent) {
-    generateMeta(fileContent);
+    inspect(fileContent);
   } else {
     process.stderr.write("No suitable code-intel was passed.\n");
   }
