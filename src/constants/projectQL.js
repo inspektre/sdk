@@ -8,8 +8,8 @@ mutation($name: String!) {
 }
 `
 const ALTER_PROJECT_THREAT_LEVEL = gql`
-mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!) {
-  MergeProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3) {
+mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!, $updated: _Neo4jDateTimeInput) {
+  MergeProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3, updated: $updated) {
     name
     threatLevel
   }

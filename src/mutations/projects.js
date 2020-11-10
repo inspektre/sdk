@@ -17,6 +17,7 @@ const deleteProject = async (name) => {
 
 const alterProjectThreatLevel = async (name, level) => {
     // Defaulting to L2 as a fail-safe.
+    const updated = new Date()
     let threatLevel = 'L2';
     let L1 = false;
     let L2 = true;
@@ -33,7 +34,7 @@ const alterProjectThreatLevel = async (name, level) => {
     }
     const result = await client.mutate({
         mutation: ALTER_PROJECT_THREAT_LEVEL,
-        variables: { name, threatLevel, L1, L2, L3 }
+        variables: { name, threatLevel, L1, L2, L3, updated}
     });
     
     if(result && result.data) {

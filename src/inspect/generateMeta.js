@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 const { processRepoResults, processTagCounters } = require('./processResults');
 
 const supportedNameTags = [
@@ -14,7 +13,7 @@ const supportedNameTags = [
 const generateMeta = (data) => {
     const meta = {};
     meta.projectName = data.metaData.applicationName;
-    meta.version = data.metaData.version
+    meta.version = data.metaData.sourceVersion;
     meta.lastUpdated = new Date(data.metaData.lastUpdated);
     meta.dateScanned = new Date(data.metaData.dateScanned);
     meta.scanTags = [];
@@ -32,12 +31,12 @@ const generateMeta = (data) => {
         return {name_contains: tag};
     });
     // Get Scan Rule meta
-    meta.repoResults = processRepoResults(data.metaData.detailedMatchList, meta.dateScanned, meta.projectnName, meta.version);
+    meta.repoResults = processRepoResults(data.metaData.detailedMatchList, meta.dateScanned, meta.projectName, meta.version);
     // Get App Types meta
     meta.appTypes = data.metaData.appTypes;
     // Get Tag Counter meta
     meta.tagCounters = processTagCounters(data.metaData.tagCounters);
-    
+
     return meta;
 };
 
