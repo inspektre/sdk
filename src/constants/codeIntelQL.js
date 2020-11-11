@@ -11,7 +11,6 @@ query($projectName: String!) {
         exceptions
         classes
         urls
-        scanTags
     }
 }
 `
@@ -27,32 +26,13 @@ query($projectName: String!, $version: String!) {
         exceptions
         classes
         urls
-        scanTags
     }
 }
 `
 
 const ALTER_CODE_INTEL = gql`
-mutation($projectName: String!,
-        $version: String!,
-        $dateScanned: _Neo4jDateTimeInput!,
-        $logging: Int!,
-        $functions: Int!,
-        $exceptions: Int!,
-        $classes: Int!,
-        $urls: Int!
-        $scanTags: [String]
-    ) {
-    CodeIntel(projectName: $projectName,
-              version: $version,
-              dateScanned: $dateScanned,
-              logging: $logging,
-              functions: $functions,
-              exceptions: $exceptions,
-              classes: $classes,
-              urls: $urls,
-              scanTags: $scanTags
-        ) {
+mutation($projectName: String!, $version: String!, $dateScanned: _Neo4jDateTimeInput!, $logging: Int!, $functions: Int!, $exceptions: Int!, $classes: Int!, $urls: Int!) {
+    CreateCodeIntel(projectName: $projectName, version: $version, dateScanned: $dateScanned, logging: $logging, functions: $functions, exceptions: $exceptions, classes: $classes, urls: $urls) {
         projectName
     }
 }
