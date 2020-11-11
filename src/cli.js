@@ -13,7 +13,7 @@ const { getAttackBySeverity, getAttackByLikelihood, getAttackByLikelihoodAndSeve
 const { getAttackByTagLikelihood, getAttackByTagSeverity, getAttackByTagSeverityLikelihood } = require('./queries');
 const { getAttackBySkill, getWeaknessesOwasp } = require('./queries');
 const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./mutations');
-const { generateMeta } = require('./inspect');
+const { inspect } = require('./inspect');
 
 // Init Commander
 const program = new commander.Command();
@@ -37,11 +37,13 @@ program
 program
 .command('inspect')
 .description('inspect source-code for security intelligence')
+.option('--threatLevel <threatLevel>', 'Set project\'s threat level. Instance: L1, L2, L3')
 .option('-f, --file <file>', 'examine security from file')
 .action((options) => {
   const fileContent = fileExists(options.file);
+  const threatLevel = options.threatLevel || 'L1'
   if(fileContent) {
-    generateMeta(fileContent);
+    inspect(fileContent, threatLevel);
   } else {
     process.stderr.write("No suitable code-intel was passed.\n");
   }
@@ -94,8 +96,9 @@ program
 .command('projects')
 .description('Query for projects created on Inspektre')
 .option('-l, --list', 'List available Projects on Inspektre')
-.option('--project <project>', 'query a project by name')
-.option('--remove', 'delete a project by projectname')
+.option('--project <project>', 'Query / Scope a project by name')
+.option('--remove', 'delete a project by projectname. Specify --project <name> ahead of --delete')
+.option('--create', 'Attempt to create a new project. Specify --project <name> to set name')
 .option('--threatLevel <threatLevel>', 'Change project\'s threat level. Instance: L1, L2, L3')
 .option('--tags <tags>', 'Add project tags. Instance: Web,SQL,http,tcp,confidentiality,integrity,availability,accesscontrol,authorization')
 .option('-v, --verbose', 'output extra information into the CLI')
@@ -103,6 +106,7 @@ program
   const list = options.list || false;
   const project = options.project || null;
   const remove = options.remove || false;
+  const create = options.create || false;
   const threatLevel = options.threatLevel || null;
   const tags = options.tags ? options.tags.split(',') : null;
 
@@ -113,11 +117,13 @@ program
     deleteProject(project);
   }
   else if (project && threatLevel) {
-    alterProjectThreatLevel(project, threatLevel);
+    alterProjectThreatLevel(project, threatLevel, new Date());
   }
   else if (project && tags) {
-    console.log("Tags", tags);
     alterProjectTags(project, tags);
+  }
+  else if(project && create) {
+    alterProjectThreatLevel(project, L1);
   }
   else if (project) {
     getProject(project);

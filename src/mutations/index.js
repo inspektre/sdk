@@ -1,7 +1,10 @@
-const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./projects');
+const { deleteProject, alterProjectThreatLevel, alterProjectTags, alterProjectUpdated } = require('./projects');
+const { setProjectCodeIntel } = require('./codeIntel');
 
 module.exports = {
     deleteProject,
     alterProjectThreatLevel,
-    alterProjectTags
+    alterProjectUpdated,
+    alterProjectTags,
+    setProjectCodeIntel
 };

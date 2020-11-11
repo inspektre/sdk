@@ -43,7 +43,7 @@ const readAuthConfig = () => {
     return data;
 };
 
-const httpLink = new HttpLink({ uri: 'https://api.inspektre.io/', fetch: fetch });
+const httpLink = new HttpLink({ uri: 'https://api.inspektre.io', fetch: fetch });
 
 // Create authorization Link middleware
 const authLink = new ApolloLink((operation, forward) => {

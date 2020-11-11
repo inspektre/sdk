@@ -1,44 +1,16 @@
-const supportedNameTags = [
-    "Cryptograph",
-    "Authentication",
-    "Authorization",
-    "LDAP",
-    "Deserialization",
-    "SQL",
-    "Credentials"
-];
+const { generateMeta } = require('./generateMeta');
+const { setProjectCodeIntel, alterProjectThreatLevel, alterProjectUpdated } = require('../mutations');
 
-
-// const supportedTypes = [
-//     "owasp-2017",
-//     "hw",
-//     "sw",
-//     "software-fault-patterns",
-//     "architecture",
-//     "top-25"
-// ];
-
-const generateMeta = (data) => {
-    const meta = {};
-    meta.name = data.metaData.applicationName;
-    meta.lastUpdated = data.metaData.lastUpdated;
-    meta.dateScanned = data.metaData.dateScanned;
-    meta.tags = [];
-    
-    data.metaData.uniqueTags.forEach(uTag => {
-        supportedNameTags.forEach(sTag => {
-            if(uTag.indexOf(sTag) > -1) {
-                meta.tags.push(sTag);
-            }
-        });
-    });
-    meta.tags = [...new Set(meta.tags)];
-    meta.tags = meta.tags.map(tag => {
-        return {name_contains: tag};
-    });
-    console.log(meta.tags);
+const inspect =  async (data, threatLevel) => {
+    const meta = generateMeta(data)
+    // Create or Update a project by name with ThreatLevel
+    await alterProjectThreatLevel(meta.projectName, threatLevel);
+    // Add Updated temporal data
+    await alterProjectUpdated(meta.projectName, meta.dateScanned);
+    // Set Code Intel
+    await setProjectCodeIntel(meta);
 };
 
 module.exports = {
-    generateMeta
+    inspect
 }
