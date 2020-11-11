@@ -10,9 +10,7 @@ const setProjectCodeIntel = async (meta) => {
         variables: { projectName, version, dateScanned, logging, functions, exceptions, classes, urls }
     })
     .catch(error => {
-        // handleErrors(error);
-        console.log(projectName, version, dateScanned, logging, functions, exceptions, classes, urls);
-        console.log('x', typeof(logging));
+        handleErrors(error);
     });
 
     if(result && result.data) {
