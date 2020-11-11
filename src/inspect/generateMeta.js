@@ -14,8 +14,7 @@ const generateMeta = (data) => {
     const meta = {};
     meta.projectName = data.metaData.applicationName;
     meta.version = data.metaData.sourceVersion;
-    meta.lastUpdated = new Date(data.metaData.lastUpdated);
-    meta.dateScanned = new Date(data.metaData.dateScanned);
+    meta.dateScanned = data.metaData.dateScanned;
     meta.scanTags = [];
     
     // Get unique Tags of Interest

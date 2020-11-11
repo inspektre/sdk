@@ -1,4 +1,4 @@
-const { DELETE_PROJECT, ALTER_PROJECT_THREAT_LEVEL, ALTER_PROJECT_TAGS } = require('../constants');
+const { DELETE_PROJECT, ALTER_PROJECT_THREAT_LEVEL, ALTER_PROJECT_TAGS, ALTER_PROECT_UPDATED } = require('../constants');
 const { client, handleErrors  } = require('../util');
 
 const deleteProject = async (name) => {
@@ -16,31 +16,40 @@ const deleteProject = async (name) => {
 };
 
 const alterProjectThreatLevel = async (name, level) => {
-    // Defaulting to L2 as a fail-safe.
-    const updated = new Date()
-    let threatLevel = 'L2';
-    let L1 = false;
-    let L2 = true;
-    let L3 = true;
+    // Defaulting to L1 by default.
+    let threatLevel = 'L1';
+    let L1 = true;
+    let L2 = false;
+    let L3 = false;
     if (level === 'L3') {
         threatLevel = 'L3';
         L3 = true;
-        L2 = false;
+        L1 = false;
     }
-    else if (level === 'L1') {
-        threatLevel = 'L1';
-        L1 = true;
-        L2 = false;
+    else if (level === 'L2') {
+        threatLevel = 'L2';
+        L1 = false;
+        L2 = true;
     }
+    
     const result = await client.mutate({
         mutation: ALTER_PROJECT_THREAT_LEVEL,
-        variables: { name, threatLevel, L1, L2, L3, updated}
+        variables: { name, threatLevel, L1, L2, L3 }
     });
-    
     if(result && result.data) {
         console.log(result.data.MergeProject);
     }
 };
+
+const alterProjectUpdated = async (name, updated) => {
+    const result = await client.mutate({
+        mutation: ALTER_PROECT_UPDATED,
+        variables: { name, updated }
+    });
+    if(result && result.data) {
+        console.log(result.data);
+    }
+}
 
 const alterProjectTags = async (name, tags) => {
     const result = await client.mutate({
@@ -56,5 +65,6 @@ const alterProjectTags = async (name, tags) => {
 module.exports = {
     deleteProject,
     alterProjectThreatLevel,
+    alterProjectUpdated,
     alterProjectTags
 };

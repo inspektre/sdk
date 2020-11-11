@@ -7,14 +7,26 @@ mutation($name: String!) {
   }
 }
 `
+
 const ALTER_PROJECT_THREAT_LEVEL = gql`
-mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!, $updated: _Neo4jDateTimeInput) {
-  MergeProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3, updated: $updated) {
+mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!) {
+  MergeProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3) {
     name
     threatLevel
   }
 }
 `
+const ALTER_PROECT_UPDATED = gql`
+mutation($name: String!, $updated: _Neo4jDateTimeInput!) {
+  CreateProject(name: $name, updated: $updated) {
+    name
+    updated {
+      year
+    }
+  }
+}
+`
+
 const ALTER_PROJECT_TAGS = gql`
 mutation($name: String!, $tags: [String]) {
   MergeProject(name: $name, tags: $tags) {
@@ -35,9 +47,6 @@ query {
     L4
     tags
     tier
-    repos {
-        name
-    }
     verifications {
       stage
       serial
@@ -86,9 +95,6 @@ query($project: String!) {
     L4
     tags
     tier
-    repos {
-        name
-    }
     verifications {
       stage
       serial
@@ -126,6 +132,7 @@ query($project: String!) {
 module.exports = { 
   DELETE_PROJECT,
   ALTER_PROJECT_THREAT_LEVEL,
+  ALTER_PROECT_UPDATED,
   ALTER_PROJECT_TAGS,
   QUERY_PROJECTS,
   QUERY_PROJECT

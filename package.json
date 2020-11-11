@@ -7,6 +7,7 @@
     "inspektre": "src/cli.js"
   },
   "scripts": {
+    "debug": "node --trace-warnings src/cli.js",
     "start": "node src/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "pkg src/cli.js --out-path builds",
@@ -29,6 +30,7 @@
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
     "js-yaml": "^3.14.0",
+    "neo4j-graphql-js": "^2.17.1",
     "node-fetch": "^2.6.1",
     "open": "^6.2.0",
     "openid-client": "^4.2.0",
