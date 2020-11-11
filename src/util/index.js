@@ -43,7 +43,6 @@ const readAuthConfig = () => {
     return data;
 };
 
-console.log(uri);
 const httpLink = new HttpLink({ uri: 'https://api.inspektre.io', fetch: fetch });
 
 // Create authorization Link middleware

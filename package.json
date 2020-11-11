@@ -7,7 +7,6 @@
     "inspektre": "src/cli.js"
   },
   "scripts": {
-    "debug": "node --trace-warnings src/cli.js",
     "start": "node src/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "pkg src/cli.js --out-path builds",
