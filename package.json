@@ -8,11 +8,7 @@
   },
   "scripts": {
     "start": "node src/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pkg src/cli.js --out-path builds",
-    "rename": "mv builds/cli-win.exe builds/inspektre-cli-win.exe && mv builds/cli-linux builds/inspektre-cli-linux && mv builds/cli-macos builds/inspektre-cli-macos",
-    "build:debug": "pkg src/cli.js --out-path debug --debug",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Uday Korlimarla",
   "license": "MIT",
@@ -29,7 +25,6 @@
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
     "js-yaml": "^3.14.0",
-    "neo4j-graphql-js": "^2.17.1",
     "node-fetch": "^2.6.1",
     "open": "^6.2.0",
     "openid-client": "^4.2.0",

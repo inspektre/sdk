@@ -16,7 +16,7 @@ const Auth = (async (verbose, headless) => {
   const audience = 'https://api.inspektre.io';
   const scope = 'email offline_access openid';
 
-  if(process.env.CLIENT_ID === undefined || process.env.CLIENT_SECRET === undefined) {
+  if(process.env.INSPEKTRE_CLIENT_ID === undefined || process.env.INSPEKTRE_CLIENT_SECRET === undefined) {
     console.log('Please set the requiredenvironment variables');
     console.log('Visit: https://app.inspektre.io/app/account for details');
     process.exit(1);
