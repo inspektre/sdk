@@ -2,7 +2,6 @@ const fs = require('fs');
 const { homedir } = require('os');
 const path = require('path');
 const figures = require('figures');
-const yaml = require('js-yaml');
 const { ApolloClient, InMemoryCache, HttpLink, ApolloLink } = require('apollo-boost');
 const fetch = require('node-fetch');
 const { handleErrors } = require('./errors');
@@ -24,35 +23,6 @@ const initConfig = (verbose) => {
     }
 };
 
-
-// Update
-const writeAuthConfig = (data) => {
-    const yamlStr = yaml.safeDump(data);
-    fs.writeFileSync(path.join(homedir(), '.inspektre', 'auth.yml'), yamlStr, 'utf-8');
-    process.env.INSPEKTRE_ACCESS_TOKEN = data.inspektre_access_token;
-    process.env.INSPEKTRE_REFRESH_TOKEN = data.inspektre_access_token;
-
-};
-
-const readAuthConfig = () => {
-    let data = null;
-    console.log(process.env.INSPEKTRE_REFRESH_TOKEN);
-    try {
-        if(process.env.INSPEKTRE_REFRESH_TOKEN && process.env.INSPEKTRE_CLIENT_ID && process.env.INSPEKTRE_ACCESS_TOKEN) {
-            data.inspektre_client_id = process.env.INSPEKTRE_REFRESH_TOKEN;
-            data.inspektre_refresh_token = process.env.INSPEKTRE_REFRESH_TOKEN;
-            data.inspektre_access_token = process.env.INSPEKTRE_ACCESS_TOKEN;
-        }
-        else {
-            let fileContents = fs.readFileSync(path.join(homedir(), '.inspektre', 'auth.yml'), 'utf8');
-            data = yaml.safeLoad(fileContents);
-        }
-    } catch (e) {
-        console.log(figures.main.cross.concat(" Please login to continue."));
-        process.exitCode = 1;
-    }
-    return data;
-};
 
 const httpLink = new HttpLink({ uri: 'https://api.inspektre.io', fetch: fetch });
 
@@ -88,4 +58,4 @@ const fileExists = (file) => {
 
 // File Contents
 
-module.exports = { client, initConfig, writeAuthConfig, readAuthConfig, handleErrors, fileExists };
+module.exports = { client, initConfig, handleErrors, fileExists };

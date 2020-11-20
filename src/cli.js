@@ -86,9 +86,10 @@ program
     if(verbose) {
       console.log(figures.main.tick.concat(" Reauthorization was successful."));
     }
-  }).catch(() => {
+  }).catch((err) => {
     console.log(figures.main.cross.concat(" Could not reauthorize this device, Please login again or try after 5 Mins."));
     console.log("We have a leeway time of 300 seconds to prevent exhaustive reauthorizations");
+    console.dir(err);
   });
 });
 
