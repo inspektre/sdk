@@ -1,6 +1,6 @@
 {
   "name": "@inspektre/inspektre",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "inspektre cli & SDK package",
   "main": "src/cli.js",
   "bin": {
@@ -24,7 +24,6 @@
     "got": "^9.6.0",
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
-    "js-yaml": "^3.14.0",
     "node-fetch": "^2.6.1",
     "open": "^6.2.0",
     "openid-client": "^4.2.0",

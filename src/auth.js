@@ -1,13 +1,16 @@
+const fs = require('fs');
+const homedir = require('os').homedir();
+const path = require('path');
 const { Issuer } = require('openid-client');
 const prompts = require('prompts');
 const got = require('got');
 const open = require('open');
 const dotenv = require('dotenv');
 const figures = require('figures');
-const { writeAuthConfig, readAuthConfig } = require('./util');
 const chalk = require('chalk');
 
-dotenv.config();
+const envpath = path.join(homedir, '/.config/inspektre/.env')
+dotenv.config({ path: envpath });
 
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -17,8 +20,8 @@ const Auth = (async (verbose, headless) => {
   const scope = 'email offline_access openid';
 
   if(process.env.INSPEKTRE_CLIENT_ID === undefined || process.env.INSPEKTRE_CLIENT_SECRET === undefined) {
-    console.log('Please set the requiredenvironment variables');
-    console.log('Visit: https://app.inspektre.io/app/account for details');
+    process.stdout.write('Please set the requiredenvironment variables');
+    process.stdout.write('Visit: https://app.inspektre.io/app/account for details');
     process.exit(1);
   };
   // fetches the .well-known endpoint for endpoints, issuer value etc.
@@ -82,7 +85,7 @@ const Auth = (async (verbose, headless) => {
         case 'authorization_pending': // soft error, should re-try in the specified interval
           if (!logged) {
             if(verbose === true){
-              console.log('\n\nauthorization pending ...');
+              process.stdout.write('\n\nauthorization pending ...\n');
             }
             logged = true;
           }
@@ -90,17 +93,17 @@ const Auth = (async (verbose, headless) => {
           break;
         case 'access_denied': // end-user declined the device confirmation prompt, consent or rules failed
           if(verbose === true) {
-            console.error('\n\ncancelled interaction');
+            process.stderr.write('\n\ncancelled interaction\n');
           }
           done = true;
           break;
         case 'expired_token': // end-user did not complete the interaction in time
-          console.error('\n\ndevice flow expired');
+          process.stderr.write('\n\nAuthorization\n');
           done = true;
           break;
         default:
           if (err.name === 'OpenIdConnectError' && verbose === true) {
-            console.error(`\n\nerror = ${err.error}; error_description = ${err.error_description}`);
+            process.stderr.write(`\n\nerror = ${err.error}; error_description = ${err.error_description}\n`);
             done = true;
           } else {
             throw err;
@@ -110,17 +113,18 @@ const Auth = (async (verbose, headless) => {
   }
   if(tokens) {
     // requests without openid scope will not contain an id_token
-    console.log('completed');
+    process.stdout.write('completed\n');
     if (tokens.id_token) {
       await client.validateIdToken(tokens); // validate ID Token (mandatory claims and signature)
     }
 
-    console.log(figures.main.tick, "Device is now authorized");
-    // console.log('\n\nresult tokens', { ...tokens });
-    const { access_token, refresh_token} = tokens;
-    writeAuthConfig({ inspektre_access_token: access_token, inspektre_refresh_token: refresh_token });
-    // To Observe claims -> tokens.claims()
-    // To get user info ->  await client.userinfo(tokens)
+    process.stdout.write(figures.main.tick, "Device is now authorized\n");
+    fs.writeFile(envpath, `INSPEKTRE_ACCESS_TOKEN=${tokens.access_token}`, function (err) {
+      if (err) {
+        process.stderr.write('Failed to set access token');
+        process.exit(1);
+      }
+    });
   }
 });
 
@@ -128,23 +132,28 @@ const Auth = (async (verbose, headless) => {
 
 const Refresh = async (verbose) => {
   const auth = await Issuer.discover('https://auth.inspektre.io');
-  const localAuthData = readAuthConfig();
+  // const localAuthData = readAuthConfig();
   const data = await got.post(auth.token_endpoint, {
       json: true, // parse the response as json
       form: true, // send the request body as application/x-www-form-urlencoded
       body: {
           grant_type: 'refresh_token',
           client_id: process.env.INSPEKTRE_CLIENT_ID,
-          refresh_token: localAuthData.inspektre_refresh_token
+          refresh_token: process.env.INSPEKTRE_TOKEN
       },
   });
 
-  if(data) {
-    writeAuthConfig({ inspektre_access_token: data.body.access_token, inspektre_refresh_token: data.body.refresh_token });
+  if(data && data.body && data.body.access_token) {
+    fs.writeFile(envpath, `INSPEKTRE_ACCESS_TOKEN=${data.body.access_token}`, function (err) {
+      if (err) {
+        process.stderr.write('Failed to set access token');
+        process.exit(1);
+      }
+    });
     if(verbose) {
-      console.log("Refreshing Authentication for the device was successful");
+      process.stdout.write("Refreshing Authentication for the device was successful.\n");
     }
-    console.log(figures.main.tick.concat(" Device is now reauthorized."));
+    process.stdout.write(figures.main.tick.concat(" Device is now reauthorized.\n"));
   }
 };
 
