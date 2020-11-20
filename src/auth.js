@@ -9,8 +9,9 @@ const dotenv = require('dotenv');
 const figures = require('figures');
 const chalk = require('chalk');
 
-dotenv.config({ path: homedir});
-const envpath = path.join(homedir, '/.env')
+const envpath = path.join(homedir, '/.config/inspektre/.env')
+dotenv.config({ path: envpath });
+
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -118,15 +119,9 @@ const Auth = (async (verbose, headless) => {
     }
 
     process.stdout.write(figures.main.tick, "Device is now authorized\n");
-    fs.appendFile(envpath, `INSPEKTRE_ACCESS_TOKEN=${tokens.access_token}`, function (err) {
+    fs.writeFile(envpath, `INSPEKTRE_ACCESS_TOKEN=${tokens.access_token}`, function (err) {
       if (err) {
         process.stderr.write('Failed to set access token');
-        process.exit(1);
-      }
-    });
-    fs.appendFile(envpath, `INSPEKTRE_REFRESH_TOKEN=${tokens.refresh_token}`, function (err) {
-      if (err) {
-        process.stderr.write('Failed to set refresh token');
         process.exit(1);
       }
     });
@@ -149,7 +144,7 @@ const Refresh = async (verbose) => {
   });
 
   if(data && data.body && data.body.access_token) {
-    fs.appendFile(envpath, `INSPEKTRE_ACCESS_TOKEN=${data.body.access_token}`, function (err) {
+    fs.writeFile(envpath, `INSPEKTRE_ACCESS_TOKEN=${data.body.access_token}`, function (err) {
       if (err) {
         process.stderr.write('Failed to set access token');
         process.exit(1);

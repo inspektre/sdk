@@ -2,6 +2,8 @@
 
 // Copyright (c) 2020, Inspektre
 // Author: Uday Korlimarla
+const homedir = require('os').homedir();
+const path = require('path');
 const commander = require('commander');
 const figures = require('figures');
 const chalk = require('chalk');
@@ -15,13 +17,16 @@ const { getAttackBySkill, getWeaknessesOwasp } = require('./queries');
 const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./mutations');
 const { inspect } = require('./inspect');
 
+const dotenv = require('dotenv');
+dotenv.config({ path: path.join(homedir, '/.config/inspektre/.env') });
+
 // Init Commander
 const program = new commander.Command();
 // Change Default Options and Actions Behavious
 program.storeOptionsAsProperties(true).passCommandToAction(true);
 // Set Version from package.json
 program.version(packageJson.version);
-program.description('inspektre - cli'.concat(` v${packageJson.version}`));
+program.description('inspektre '.concat(` v${packageJson.version}`));
 
 // Version
 program
@@ -29,10 +34,19 @@ program
 .action((action) => {
   const version = action.version || false;
   if(version) {
-    console.log('Inspektre-CLI Version: v'.format(packageJson.version));
+    console.log('inspektre v'.format(packageJson.version));
   }
 });
 
+// Init
+program
+.command('init')
+.description('Initialize Configuration store in the user\'s home directory')
+.option('-v, --verbose', 'output extra information into the CLI')
+.action((options) => {
+  const verbose = options.verbose || false;
+  initConfig(verbose);
+});
 // Get code-intel from file
 program
 .command('inspect')
@@ -48,17 +62,6 @@ program
     process.stderr.write("No suitable code-intel was passed.\n");
   }
 });
-
-// Intialize
-program
-.command('init')
-.description('Initialize Configuration store in the user\'s home directory')
-.option('-v, --verbose', 'output extra information into the CLI')
-.action((options) => {
-  const verbose = options.verbose || false;
-  initConfig(verbose);
-});
-
 
 // Login Action
 program
