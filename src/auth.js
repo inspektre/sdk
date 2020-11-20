@@ -26,8 +26,8 @@ const Auth = (async (verbose, headless) => {
 
   // instantiates a client
   const client = new auth.Client({
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
+    client_id: process.env.INSPEKTRE_CLIENT_ID,
+    client_secret: process.env.INSPEKTRE_CLIENT_SECRET,
     token_endpoint_auth_method: 'Post',
     id_token_signed_response_alg: 'RS256',
   });
@@ -134,7 +134,7 @@ const Refresh = async (verbose) => {
       form: true, // send the request body as application/x-www-form-urlencoded
       body: {
           grant_type: 'refresh_token',
-          client_id: process.env.CLIENT_ID,
+          client_id: process.env.INSPEKTRE_CLIENT_ID,
           refresh_token: localAuthData.inspektre_refresh_token
       },
   });
