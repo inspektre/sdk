@@ -134,7 +134,7 @@ const Refresh = async (verbose) => {
       form: true, // send the request body as application/x-www-form-urlencoded
       body: {
           grant_type: 'refresh_token',
-          client_id: process.env.INSPEKTRE_CLIENT_ID,
+          client_id: localAuthData.inspektre_client_id,
           refresh_token: localAuthData.inspektre_refresh_token
       },
   });

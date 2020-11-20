@@ -29,13 +29,24 @@ const initConfig = (verbose) => {
 const writeAuthConfig = (data) => {
     const yamlStr = yaml.safeDump(data);
     fs.writeFileSync(path.join(homedir(), '.inspektre', 'auth.yml'), yamlStr, 'utf-8');
+    process.env.INSPEKTRE_ACCESS_TOKEN = data.inspektre_access_token;
+    process.env.INSPEKTRE_REFRESH_TOKEN = data.inspektre_access_token;
+
 };
 
 const readAuthConfig = () => {
     let data = null;
+    console.log(process.env.INSPEKTRE_REFRESH_TOKEN);
     try {
-        let fileContents = fs.readFileSync(path.join(homedir(), '.inspektre', 'auth.yml'), 'utf8');
-        data = yaml.safeLoad(fileContents);
+        if(process.env.INSPEKTRE_REFRESH_TOKEN && process.env.INSPEKTRE_CLIENT_ID && process.env.INSPEKTRE_ACCESS_TOKEN) {
+            data.inspektre_client_id = process.env.INSPEKTRE_REFRESH_TOKEN;
+            data.inspektre_refresh_token = process.env.INSPEKTRE_REFRESH_TOKEN;
+            data.inspektre_access_token = process.env.INSPEKTRE_ACCESS_TOKEN;
+        }
+        else {
+            let fileContents = fs.readFileSync(path.join(homedir(), '.inspektre', 'auth.yml'), 'utf8');
+            data = yaml.safeLoad(fileContents);
+        }
     } catch (e) {
         console.log(figures.main.cross.concat(" Please login to continue."));
         process.exitCode = 1;
