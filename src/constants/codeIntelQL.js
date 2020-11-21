@@ -30,9 +30,27 @@ query($projectName: String!, $version: String!) {
 }
 `
 
-const ALTER_CODE_INTEL = gql`
-mutation($projectName: String!, $version: String!, $dateScanned: _Neo4jDateTimeInput!, $logging: Int!, $functions: Int!, $exceptions: Int!, $classes: Int!, $urls: Int!) {
-    CreateCodeIntel(projectName: $projectName, version: $version, dateScanned: $dateScanned, logging: $logging, functions: $functions, exceptions: $exceptions, classes: $classes, urls: $urls) {
+const CREATE_CODE_INTEL = gql`
+mutation(
+    $projectName: String!,
+    $version: String!,
+    $dateScanned: _Neo4jDateTimeInput!,
+    $logging: Int!,
+    $functions: Int!,
+    $exceptions: Int!,
+    $classes: Int!,
+    $urls: Int!
+) {
+    CreateCodeIntel(
+        projectName: $projectName, 
+        version: $version, 
+        dateScanned: $dateScanned, 
+        logging: $logging, 
+        functions: $functions, 
+        exceptions: $exceptions, 
+        classes: $classes,
+        urls: $urls
+    ) {
         projectName
     }
 }
@@ -41,5 +59,5 @@ mutation($projectName: String!, $version: String!, $dateScanned: _Neo4jDateTimeI
 module.exports = {
     QUERY_CODE_INTEL_BY_PROJECT,
     QUERY_CODE_INTEL_BY_PROJECT_VERSION,
-    ALTER_CODE_INTEL
+    CREATE_CODE_INTEL
 }

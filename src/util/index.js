@@ -23,6 +23,17 @@ const initConfig = (verbose) => {
     }
 };
 
+const generateDate = (dateString) => {
+    const date = new Date(dateString);
+    return {
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        day: date.getDay(),
+        hour: date.getUTCHours(),
+        minute: date.getUTCMinutes(),
+        second: date.getUTCSeconds()
+    }
+}
 // Create authorization Link middleware
 const authLink = new ApolloLink((operation, forward) => {
     operation.setContext({
@@ -54,4 +65,4 @@ const fileExists = (file) => {
 
 // File Contents
 
-module.exports = { client, initConfig, handleErrors, fileExists };
+module.exports = { client, initConfig, handleErrors, fileExists, generateDate };

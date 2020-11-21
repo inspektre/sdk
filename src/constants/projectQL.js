@@ -7,6 +7,13 @@ mutation($name: String!) {
   }
 }
 `
+const CREATE_PROJECT = gql`
+mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!) {
+  CreateProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3) {
+    name
+  }
+}
+`
 
 const ALTER_PROJECT_THREAT_LEVEL = gql`
 mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!) {
@@ -20,9 +27,6 @@ const ALTER_PROECT_UPDATED = gql`
 mutation($name: String!, $updated: _Neo4jDateTimeInput!) {
   UpdateProject(name: $name, updated: $updated) {
     name
-    updated {
-      year
-    }
   }
 }
 `
@@ -83,6 +87,13 @@ query {
   }
 }
 `
+const QUERY_PROJECT_EXISTS = gql`
+query($project: String!) {
+  Project(filter: {name: $project}) {
+    name
+  }
+}
+`
 
 const QUERY_PROJECT = gql`
 query($project: String!) {
@@ -131,9 +142,11 @@ query($project: String!) {
 
 module.exports = { 
   DELETE_PROJECT,
+  CREATE_PROJECT,
   ALTER_PROJECT_THREAT_LEVEL,
   ALTER_PROECT_UPDATED,
   ALTER_PROJECT_TAGS,
   QUERY_PROJECTS,
-  QUERY_PROJECT
+  QUERY_PROJECT,
+  QUERY_PROJECT_EXISTS
 };
