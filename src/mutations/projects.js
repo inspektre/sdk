@@ -1,5 +1,6 @@
-const { DELETE_PROJECT, ALTER_PROJECT_THREAT_LEVEL, ALTER_PROJECT_TAGS, ALTER_PROECT_UPDATED } = require('../constants');
-const { client, handleErrors  } = require('../util');
+const { DELETE_PROJECT, CREATE_PROJECT } = require('../constants');
+const { ALTER_PROJECT_THREAT_LEVEL, ALTER_PROJECT_TAGS, ALTER_PROECT_UPDATED } = require('../constants');
+const { client, handleErrors } = require('../util');
 
 const deleteProject = async (name) => {
     const result = await client.mutate({
@@ -7,13 +8,41 @@ const deleteProject = async (name) => {
         variables: { name }
     })
     .catch(error => {
-    handleErrors(error);
+        handleErrors(error);
     });
 
     if(result && result.data) {
         console.log("Project has been deleted or does not exist.");
     }
 };
+
+const createProject = async (name, level) => {
+    let threatLevel = 'L1';
+    let L1 = true;
+    let L2 = false;
+    let L3 = false;
+    if (level === 'L3') {
+        threatLevel = 'L3';
+        L3 = true;
+        L1 = false;
+    }
+    else if (level === 'L2') {
+        threatLevel = 'L2';
+        L1 = false;
+        L2 = true;
+    }
+    const result = await client.mutate({
+        mutation: CREATE_PROJECT,
+        variables: { name, threatLevel, L1, L2, L3 }
+    })
+    .catch(error => {
+        handleErrors(error);
+    });
+    
+    if (result && result.data) {
+        process.stdout.write(`Created project: ${name}\n`);
+    }
+}
 
 const alterProjectThreatLevel = async (name, level) => {
     // Defaulting to L1 by default.
@@ -37,7 +66,7 @@ const alterProjectThreatLevel = async (name, level) => {
         variables: { name, threatLevel, L1, L2, L3 }
     });
     if(result && result.data) {
-        console.log(result.data.MergeProject);
+        process.stdout.write(`Project threat level altered: ${threatLevel}\n`)
     }
 };
 
@@ -45,9 +74,14 @@ const alterProjectUpdated = async (name, updated) => {
     const result = await client.mutate({
         mutation: ALTER_PROECT_UPDATED,
         variables: { name, updated }
+    })
+    .catch(error => {
+        console.log(error);
+        handleErrors(error);
     });
+
     if(result && result.data) {
-        console.log(result.data);
+        process.stdout.write('Recording time\n')
     }
 }
 
@@ -64,6 +98,7 @@ const alterProjectTags = async (name, tags) => {
 
 module.exports = {
     deleteProject,
+    createProject,
     alterProjectThreatLevel,
     alterProjectUpdated,
     alterProjectTags

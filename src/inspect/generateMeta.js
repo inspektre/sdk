@@ -1,4 +1,5 @@
 const { processRepoResults, processTagCounters } = require('./processResults');
+const { generateDate } = require('../util');
 
 const supportedNameTags = [
     "Cryptograph",
@@ -13,8 +14,14 @@ const supportedNameTags = [
 const generateMeta = (data) => {
     const meta = {};
     meta.projectName = data.metaData.applicationName;
-    meta.version = data.metaData.sourceVersion;
-    meta.dateScanned = { formatted: new Date(data.metaData.dateScanned).toISOString() };
+    meta.version = data.metaData.sourceVersion || '0.0.1'
+    
+    // This fails 
+    // meta.dateScanned = {formatted: new Date(data.metaData.dateScanned).toISOString() };
+    
+    // These destructured dates work
+    // meta.dateScanned = { year: 2020, month: 11, day: 11 }
+    meta.dateScanned = generateDate(data.metaData.dateScanned);
     meta.scanTags = [];
     
     // Get unique Tags of Interest

@@ -1,6 +1,6 @@
 {
   "name": "@inspektre/inspektre",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "inspektre cli & SDK package",
   "main": "src/cli.js",
   "bin": {
@@ -18,11 +18,11 @@
   "dependencies": {
     "apollo-boost": "^0.4.9",
     "chalk": "^4.1.0",
-    "commander": "^6.1.0",
+    "commander": "^6.2.0",
     "dotenv": "^8.2.0",
     "figures": "^3.2.0",
     "got": "^9.6.0",
-    "graphql": "^15.3.0",
+    "graphql": "^15.4.0",
     "graphql-tag": "^2.11.0",
     "node-fetch": "^2.6.1",
     "open": "^6.2.0",

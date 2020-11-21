@@ -11,8 +11,7 @@ const handleErrors = (error) => {
     }
     else if(error.graphQLErrors) {
         process.stderr.write(chalk.red(figures.main.cross).concat(" ", error.graphQLErrors[0].message, "\n"));
-        console.log('Please reauthorize the device to proceed.');
-        console.log('Type inspektre-cli reauthorize.');
+        console.dir(error.graphQLErrors.locations);
     }
     
 };
