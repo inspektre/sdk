@@ -9,7 +9,7 @@ const dotenv = require('dotenv');
 const figures = require('figures');
 const chalk = require('chalk');
 
-const envpath = path.join(homedir, '/.config/inspektre/.env')
+const envpath = path.join(homedir, '/.config/inspektre/.env');
 dotenv.config({ path: envpath });
 
 

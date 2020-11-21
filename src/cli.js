@@ -19,6 +19,8 @@ const { inspect } = require('./inspect');
 
 const dotenv = require('dotenv');
 dotenv.config({ path: path.join(homedir, '/.config/inspektre/.env') });
+// Implicityl initalize config directory
+initConfig();
 
 // Init Commander
 const program = new commander.Command();
