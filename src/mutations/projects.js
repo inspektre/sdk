@@ -66,7 +66,7 @@ const alterProjectThreatLevel = async (name, level) => {
         variables: { name, threatLevel, L1, L2, L3 }
     });
     if(result && result.data) {
-        process.stdout.write(`Project threat level altered: ${threatLevel}\n`)
+        process.stdout.write(`Project threat level altered: ${threatLevel}\n`);
     }
 };
 

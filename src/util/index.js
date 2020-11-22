@@ -32,8 +32,8 @@ const generateDate = (dateString) => {
         hour: date.getHours(),
         minute: date.getMinutes(),
         second: date.getSeconds()
-    }
-}
+    };
+};
 // Create authorization Link middleware
 const authLink = new ApolloLink((operation, forward) => {
     operation.setContext({
