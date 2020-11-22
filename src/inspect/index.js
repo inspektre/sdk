@@ -1,6 +1,11 @@
 const { generateMeta } = require('./generateMeta');
-const { setProjectCodeIntel, alterProjectThreatLevel, alterProjectUpdated, createProject } = require('../mutations');
-const { createScans } = require('../mutations');
+const {
+    setProjectCodeIntel,
+    alterProjectThreatLevel,
+    alterProjectUpdated,
+    createProject,
+    createScans
+} = require('../mutations');
 const { projectExists } = require('../queries');
 
 const inspect =  async (data, threatLevel) => {

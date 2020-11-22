@@ -1,7 +1,14 @@
 const { client, handleErrors  } = require('../util');
-const { QUERY_ATTACKS_BY_LIKELIHOOD, QUERY_ATTACKS_BY_SEVERITY, QUERY_ATTACKS_BY_SKILL } = require('../constants');
-const { QUERY_ATTACKS_BY_TAG, QUERY_ATTACKS_BY_LIKELIHOOD_AND_SEVERITY } = require('../constants');
-const { QUERY_ATTACKS_BY_TAG_SEVRITY, QUERY_ATTACKS_BY_TAG_LIKELIHOOD, QUERY_ATTACKS_BY_TAG_SEVRITY_LIKELIHOOD } = require('../constants');
+const {
+  QUERY_ATTACKS_BY_LIKELIHOOD,
+  QUERY_ATTACKS_BY_SEVERITY,
+  QUERY_ATTACKS_BY_SKILL,
+  QUERY_ATTACKS_BY_TAG,
+  QUERY_ATTACKS_BY_LIKELIHOOD_AND_SEVERITY,
+  QUERY_ATTACKS_BY_TAG_SEVRITY,
+  QUERY_ATTACKS_BY_TAG_LIKELIHOOD,
+  QUERY_ATTACKS_BY_TAG_SEVRITY_LIKELIHOOD
+} = require('../constants');
 
 const getAttackBySeverity = async (severities) => {
     const result = await client.query({
