@@ -6,19 +6,19 @@ const { projectExists } = require('../queries');
 const inspect =  async (data, threatLevel) => {
     const meta = generateMeta(data)
     // Create or Update a project by name with ThreatLevel
-    // if(await projectExists(meta.projectName)) {
-    //     await alterProjectThreatLevel(meta.projectName, threatLevel);
-    // }
-    // else {
-    //     process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
-    //     await createProject(meta.projectName, threatLevel);
-    // }
-    // // Add Updated temporal data
-    // await alterProjectUpdated(meta.projectName, meta.dateScanned);
-    // // // Set Code Intel
-    // await setProjectCodeIntel(meta);
-    meta.repoResults.forEach(result => {
-        createScans(result);
+    if(await projectExists(meta.projectName)) {
+        await alterProjectThreatLevel(meta.projectName, threatLevel);
+    }
+    else {
+        process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
+        await createProject(meta.projectName, threatLevel);
+    }
+    // Add Updated temporal data
+    await alterProjectUpdated(meta.projectName, meta.dateScanned);
+    // // Set Code Intel
+    await setProjectCodeIntel(meta);
+    meta.repoResults.forEach(repoResult => {
+        createScans(repoResult);
     });
 };
 
