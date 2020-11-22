@@ -1,6 +1,7 @@
 const { generateMeta } = require('./generateMeta');
 const { setProjectCodeIntel, alterProjectThreatLevel, alterProjectUpdated, createProject } = require('../mutations');
-const { projectExists } = require('../queries')
+const { createScans } = require('../mutations');
+const { projectExists } = require('../queries');
 
 const inspect =  async (data, threatLevel) => {
     const meta = generateMeta(data)
@@ -16,8 +17,8 @@ const inspect =  async (data, threatLevel) => {
     // await alterProjectUpdated(meta.projectName, meta.dateScanned);
     // // // Set Code Intel
     // await setProjectCodeIntel(meta);
-    meta.repoResults.array.forEach(result => {
-        console.log(result.ruleId);
+    meta.repoResults.forEach(result => {
+        createScans(result);
     });
 };
 

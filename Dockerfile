@@ -1,5 +1,5 @@
 # inspektre CLI
-FROM node:14
+FROM node:15
 RUN apt-get update && apt-get install -y yarn
 WORKDIR /usr/src/app
 COPY package.json ./
