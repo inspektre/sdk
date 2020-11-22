@@ -90,7 +90,6 @@ const Auth = (async (verbose, headless) => {
             logged = true;
           }
           return wait(interval);
-          break;
         case 'access_denied': // end-user declined the device confirmation prompt, consent or rules failed
           if(verbose === true) {
             process.stderr.write('\n\ncancelled interaction\n');

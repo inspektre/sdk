@@ -1,5 +1,10 @@
-const { deleteProject, createProject } = require('./projects');
-const { alterProjectThreatLevel, alterProjectTags, alterProjectUpdated } = require('./projects');
+const {
+    deleteProject,
+    createProject,
+    alterProjectThreatLevel,
+    alterProjectTags,
+    alterProjectUpdated
+} = require('./projects');
 const { setProjectCodeIntel } = require('./codeIntel');
 const { createScans } = require('./scans')
 

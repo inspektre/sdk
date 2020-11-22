@@ -10,10 +10,19 @@ const chalk = require('chalk');
 const packageJson = require('../package.json');
 const { Auth, Refresh } = require('./auth');
 const { initConfig, fileExists } = require('./util');
-const { getProjects, getProject, getAttackByTag } = require('./queries');
-const { getAttackBySeverity, getAttackByLikelihood, getAttackByLikelihoodAndSeverity } = require('./queries');
-const { getAttackByTagLikelihood, getAttackByTagSeverity, getAttackByTagSeverityLikelihood } = require('./queries');
-const { getAttackBySkill, getWeaknessesOwasp } = require('./queries');
+const {
+  getProjects,
+  getProject,
+  getAttackByTag,
+  getAttackBySeverity,
+  getAttackByLikelihood,
+  getAttackByLikelihoodAndSeverity,
+  getAttackByTagLikelihood,
+  getAttackByTagSeverity,
+  getAttackByTagSeverityLikelihood, 
+  getAttackBySkill,
+  getWeaknessesOwasp
+} = require('./queries');
 const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./mutations');
 const { inspect } = require('./inspect');
 

@@ -8,6 +8,8 @@ pids
 *.pid
 *.seed
 
+# deepcode
+.dccache
 builds/
 
 # Sensitive config items

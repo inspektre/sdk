@@ -1,5 +1,10 @@
-const { DELETE_PROJECT, CREATE_PROJECT } = require('../constants');
-const { ALTER_PROJECT_THREAT_LEVEL, ALTER_PROJECT_TAGS, ALTER_PROECT_UPDATED } = require('../constants');
+const {
+    DELETE_PROJECT,
+    CREATE_PROJECT,
+    ALTER_PROJECT_THREAT_LEVEL,
+    ALTER_PROJECT_TAGS,
+    ALTER_PROECT_UPDATED
+} = require('../constants');
 const { client, handleErrors } = require('../util');
 
 const deleteProject = async (name) => {
