@@ -112,19 +112,22 @@ const Auth = (async (verbose, headless) => {
     });
   }
   if(tokens) {
-    // requests without openid scope will not contain an id_token
-    process.stdout.write('completed\n');
     if (tokens.id_token) {
       await client.validateIdToken(tokens); // validate ID Token (mandatory claims and signature)
     }
-
-    process.stdout.write(figures.main.tick, "Device is now authorized\n");
+    console.log(chalk.green(figures.main.tick).concat(' Authorization successful.'));
+    // process.stdout.write(figures.main.tick, "Device is now authorized. Saving Access Locally.\n");
     fs.writeFile(envpath, `INSPEKTRE_ACCESS_TOKEN=${tokens.access_token}`, function (err) {
       if (err) {
         process.stderr.write('Failed to set access token');
         process.exit(1);
       }
     });
+    process.stdout.write('Please Save the below into your environment as INSPEKTRE_TOKEN\n');
+    process.stdout.write(chalk.green(figures.main.arrowRight));
+    process.stdout.write(`${tokens.refresh_token}\n`);
+    // requests without openid scope will not contain an id_token
+    process.stdout.write('completed\n');
   }
 });
 
