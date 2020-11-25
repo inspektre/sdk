@@ -17,11 +17,10 @@ const generateMeta = (data) => {
     meta.version = data.metaData.sourceVersion || '0.0.1';
     
     // This fails 
-    // meta.dateScanned = {formatted: new Date(data.metaData.dateScanned).toISOString() };
-    
+    meta.dateScanned = {formatted: new Date(data.metaData.dateScanned).toISOString() };
     // These destructured dates work
     // meta.dateScanned = { year: 2020, month: 11, day: 11 }
-    meta.dateScanned = generateDate(data.metaData.dateScanned);
+    // meta.dateScanned = generateDate(data.metaData.dateScanned);
     meta.scanTags = [];
     
     // Get unique Tags of Interest
