@@ -2,10 +2,11 @@ const fs = require('fs');
 const homedir = require('os').homedir();
 const path = require('path');
 // const figures = require('figures');
-const { ApolloClient, InMemoryCache, HttpLink, ApolloLink } = require('apollo-boost');
+const { ApolloClient, InMemoryCache, HttpLink, ApolloLink } = require('@apollo/client/core');
 const fetch = require('node-fetch');
-const { handleErrors } = require('./errors');
 const dotenv = require('dotenv');
+const { handleErrors } = require('./errors');
+const packageJson = require('../../package.json');
 
 dotenv.config({ path: path.join(homedir, '/.config/inspektre/.env') });
 
@@ -34,7 +35,8 @@ const generateDate = (dateString) => {
         second: date.getSeconds()
     };
 };
-// Create authorization Link middleware
+
+// Generate Auth Link
 const authLink = new ApolloLink((operation, forward) => {
     operation.setContext({
         headers: {
@@ -48,7 +50,18 @@ const authLink = new ApolloLink((operation, forward) => {
 // Inspektre API Client
 const client = new ApolloClient({
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
+    name: 'inspektre-sdk',
+    headers: {
+        authorization: `Bearer ${process.env.INSPEKTRE_ACCESS_TOKEN}`
+    },
+    version: packageJson.version,
+    queryDeduplication: false,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-and-network',
+        },
+    },
 });
 
 // File Exists
