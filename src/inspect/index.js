@@ -1,4 +1,5 @@
 const { generateMeta } = require('./generateMeta');
+const { generateDate } = require('../util');
 const {
     setProjectCodeIntel,
     alterProjectThreatLevel,
@@ -13,13 +14,18 @@ const inspect =  async (data, threatLevel) => {
     // Create or Update a project by name with ThreatLevel
     if(await projectExists(meta.projectName)) {
         await alterProjectThreatLevel(meta.projectName, threatLevel);
+        // Update Time of change for existing proj.
+        // To-Do: Combine these two mutations into one
+        /* 
+            Temporary patch for ISO String - GQL or APOC Bug
+        */
+        await alterProjectUpdated(meta.projectName, generateDate(new Date().toISOString()));
     }
     else {
         process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
-        await createProject(meta.projectName, threatLevel);
+        await createProject(meta.projectName, threatLevel, meta.dateScanned);
     }
-    // Add Updated temporal data
-    await alterProjectUpdated(meta.projectName, meta.dateScanned);
+
     // // Set Code Intel
     await setProjectCodeIntel(meta);
     meta.repoResults.forEach(repoResult => {

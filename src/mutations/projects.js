@@ -21,7 +21,7 @@ const deleteProject = async (name) => {
     }
 };
 
-const createProject = async (name, level) => {
+const createProject = async (name, level, createdAt) => {
     let threatLevel = 'L1';
     let L1 = true;
     let L2 = false;
@@ -38,7 +38,7 @@ const createProject = async (name, level) => {
     }
     const result = await client.mutate({
         mutation: CREATE_PROJECT,
-        variables: { name, threatLevel, L1, L2, L3 }
+        variables: { name, threatLevel, L1, L2, L3, createdAt }
     })
     .catch(error => {
         handleErrors(error);
@@ -75,10 +75,10 @@ const alterProjectThreatLevel = async (name, level) => {
     }
 };
 
-const alterProjectUpdated = async (name, updated) => {
+const alterProjectUpdated = async (name, updatedAt) => {
     const result = await client.mutate({
         mutation: ALTER_PROECT_UPDATED,
-        variables: { name, updated }
+        variables: { name, updatedAt }
     })
     .catch(error => {
         console.log(error);

@@ -1,5 +1,5 @@
 const { processRepoResults, processTagCounters } = require('./processResults');
-const { generateDate } = require('../util');
+
 
 const supportedNameTags = [
     "Cryptograph",
@@ -18,9 +18,6 @@ const generateMeta = (data) => {
     
     // This fails 
     meta.dateScanned = {formatted: new Date(data.metaData.dateScanned).toISOString() };
-    // These destructured dates work
-    // meta.dateScanned = { year: 2020, month: 11, day: 11 }
-    // meta.dateScanned = generateDate(data.metaData.dateScanned);
     meta.scanTags = [];
     
     // Get unique Tags of Interest

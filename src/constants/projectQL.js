@@ -8,8 +8,8 @@ mutation($name: String!) {
 }
 `
 const CREATE_PROJECT = gql`
-mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!) {
-  CreateProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3) {
+mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!, $createdAt: _Neo4jDateTimeInput!) {
+  CreateProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3, createdAt: $createdAt, updatedAt: $createdAt) {
     name
   }
 }
@@ -24,8 +24,8 @@ mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L
 }
 `
 const ALTER_PROECT_UPDATED = gql`
-mutation($name: String!, $updated: _Neo4jDateTimeInput!) {
-  UpdateProject(name: $name, updated: $updated) {
+mutation($name: String!, $updatedAt: _Neo4jDateTimeInput!) {
+  MergeProject(name: $name, updatedAt: $updatedAt) {
     name
   }
 }
