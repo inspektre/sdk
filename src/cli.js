@@ -64,11 +64,20 @@ program
 .description('inspect source-code for security intelligence')
 .option('--threatLevel <threatLevel>', 'Set project\'s threat level. Instance: L1, L2, L3')
 .option('-f, --file <file>', 'examine security from file')
+.option('--sarif <sarif>', 'Examine SARIF for intel')
+.option('--deepcode', 'Deepcode.ai to SARIF for intel')
 .action((options) => {
-  const fileContent = fileExists(options.file);
-  const threatLevel = options.threatLevel || 'L1'
-  if(fileContent) {
-    inspect(fileContent, threatLevel);
+  let fileContent;
+  const threatLevel = options.threatLevel || 'L1';
+  const deepcode = options.deepcode;
+  const sarif = options.sarif;
+  let checkSarif = false;
+  if (fileExists(sarif) && deepcode) {
+    checkSarif = true;
+  }
+  if (fileExists(options.file)) {
+    fileContent = require(options.file);
+    inspect(fileContent, threatLevel, checkSarif, sarif);
   } else {
     process.stderr.write("No suitable code-intel was passed.\n");
   }

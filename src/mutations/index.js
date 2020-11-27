@@ -7,6 +7,8 @@ const {
 } = require('./projects');
 const { setProjectCodeIntel } = require('./codeIntel');
 const { createScans } = require('./scans')
+const { createSarif } = require('./sarif');
+
 
 module.exports = {
     deleteProject,
@@ -15,5 +17,6 @@ module.exports = {
     alterProjectUpdated,
     alterProjectTags,
     setProjectCodeIntel,
-    createScans
+    createScans,
+    createSarif
 };

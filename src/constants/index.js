@@ -17,9 +17,14 @@ const {
     QUERY_ATTACKS_BY_TAG_LIKELIHOOD,
     QUERY_ATTACKS_BY_TAG_SEVRITY_LIKELIHOOD
 } = require('./attacksQL');
+const { 
+    QUERY_CODE_INTEL_BY_PROJECT,
+    QUERY_CODE_INTEL_BY_PROJECT_VERSION,
+    CREATE_CODE_INTEL
+} = require('./codeIntelQL');
 const { QUERY_WEAKNESS_BY_OWASP } = require('./weaknessQL');
-const { QUERY_CODE_INTEL_BY_PROJECT, QUERY_CODE_INTEL_BY_PROJECT_VERSION, CREATE_CODE_INTEL } = require('./codeIntelQL');
 const { CREATE_SCANS } = require('./scansQL');
+const { CREATE_SARIF } = require('./sarifQL');
 
 module.exports = {
     ALTER_PROJECT_THREAT_LEVEL,
@@ -44,4 +49,5 @@ module.exports = {
     QUERY_CODE_INTEL_BY_PROJECT_VERSION,
     CREATE_CODE_INTEL,
     CREATE_SCANS,
+    CREATE_SARIF
 };

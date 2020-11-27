@@ -1,9 +1,9 @@
-const processRepoResults = (matches, dateScanned, applicationName, version) => {
+const processRepoResults = (matches, dateScanned, applicationName, version, createdAt) => {
     let repoResults = [];
     if(matches) {
         repoResults = matches.map(match => {
             return {
-                dateScanned,
+                dateScanned: dateScanned,
                 projectName: applicationName,
                 version,
                 ruleId: match.ruleId,
