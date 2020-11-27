@@ -8,8 +8,9 @@ const {
     createScans
 } = require('../mutations');
 const { projectExists } = require('../queries');
+const { consumeDCAISarif } = require('../sarif');
 
-const inspect =  async (data, threatLevel) => {
+const inspect =  async (data, threatLevel, checkSarif, sarif) => {
     const meta = generateMeta(data)
     // Create or Update a project by name with ThreatLevel
     if(await projectExists(meta.projectName)) {
@@ -31,6 +32,9 @@ const inspect =  async (data, threatLevel) => {
     meta.repoResults.forEach(repoResult => {
         createScans(repoResult);
     });
+    if(checkSarif) {
+        await consumeDCAISarif(sarif, meta.projectName, meta.version);
+    }
 };
 
 module.exports = {

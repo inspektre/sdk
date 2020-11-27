@@ -68,7 +68,7 @@ const client = new ApolloClient({
 const fileExists = (file) => {
     try {
         if(fs.existsSync(file)) {
-            return require(file);
+            return true;
         } 
         return false;
     } catch (err) {
