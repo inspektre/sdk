@@ -27,7 +27,6 @@ const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./
 const { inspect } = require('./inspect');
 
 const dotenv = require('dotenv');
-const { option } = require('commander');
 dotenv.config({ path: path.join(homedir, '/.config/inspektre/.env') });
 // Implicityl initalize config directory
 initConfig();
