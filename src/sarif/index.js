@@ -1,4 +1,3 @@
-const { reset } = require('chalk');
 const fs = require('fs');
 const { createSarif } = require('../mutations');
 
