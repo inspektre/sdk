@@ -5,7 +5,10 @@ const {
     alterProjectThreatLevel,
     alterProjectUpdated,
     createProject,
-    createScans
+    createScans,
+    setVerificationsMeta,
+    setAttacksMeta,
+    setWeaknessMeta
 } = require('../mutations');
 const { projectExists } = require('../queries');
 const { consumeDCAISarif } = require('../sarif');
@@ -27,14 +30,39 @@ const inspect =  async (data, threatLevel, checkSarif, sarif) => {
         await createProject(meta.projectName, threatLevel, meta.dateScanned);
     }
 
+    // FIX  CodeIntel and Sarif
+
     // // Set Code Intel
     await setProjectCodeIntel(meta);
-    meta.repoResults.forEach(repoResult => {
-        createScans(repoResult);
+    const scanRecordsPromise = new Promise((resolve, reject) => {
+        try {
+            const scanRecords = meta.repoResults.map(repoResult => {
+                return createScans(repoResult);
+            });
+            resolve(scanRecords);
+        }
+        catch(err) {
+            reject(err);
+        }    
     });
+    
     if(checkSarif) {
         await consumeDCAISarif(sarif, meta.projectName, meta.version);
     }
+
+    // Set META
+    await setVerificationsMeta(meta.projectName);
+    await setAttacksMeta(meta.projectName);
+    await setWeaknessMeta(meta.projectName);
+    // TO-Do: 
+    // Set All Metas
+
+    // scanRecordsPromise.then(recs => {
+    //     recs.forEach(r => console.log(r));
+    // })
+    // .catch(err => {
+    //     process.stderr.write('Failed retrieving scan records');
+    // })
 };
 
 module.exports = {
