@@ -8,12 +8,17 @@ const {
     createScans,
     setVerificationsMeta,
     setAttacksMeta,
-    setWeaknessMeta
+    setWeaknessMeta,
+    setScansMeta,
+    setProjectCodeIntelMeta,
+    setSarifProjectMeta,
+    setCodeIntelScansMeta
 } = require('../mutations');
 const { projectExists } = require('../queries');
 const { consumeDCAISarif } = require('../sarif');
 
 const inspect =  async (data, threatLevel, checkSarif, sarif) => {
+    // Step #1: Generate Metadata and a Project
     const meta = generateMeta(data)
     // Create or Update a project by name with ThreatLevel
     if(await projectExists(meta.projectName)) {
@@ -29,26 +34,35 @@ const inspect =  async (data, threatLevel, checkSarif, sarif) => {
         process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
         await createProject(meta.projectName, threatLevel, meta.dateScanned);
     }
-
-    // FIX  CodeIntel and Sarif
-
-    // // Set Code Intel
-    await setProjectCodeIntel(meta);
-    const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
     
-    let sarifentries = null;
+    /* Step #2: Record Scan Results */
+    const codeIntelEntry = await setProjectCodeIntel(meta);
+    await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
+    const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
 
+    /* Step #3: Security Graphs */
+    if(scanRecords) {
+        const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
+        if(prjktScanMeta) {
+            console.log('Project Scans Meta is set.');
+        }
+        
+       const codeIntlScanMeta = await Promise.all(scanRecords.map(scanId => setCodeIntelScansMeta(codeIntelEntry, meta.projectName, meta.version, scanId)));
+       if(codeIntlScanMeta) {
+           console.log('CodeIntel Scans Meta is set.');
+       }
+    }
     if(checkSarif) {
-        sarifentries = await consumeDCAISarif(sarif, meta.projectName, meta.version);
+        const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
+        await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
     }
 
     // Set META
     await setVerificationsMeta(meta.projectName);
     await setAttacksMeta(meta.projectName);
     await setWeaknessMeta(meta.projectName);
-    // TO-Do: 
-    // Set All Metas
-    // Sarif, Scans and Code Intel to Project
+    process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
+
 };
 
 module.exports = {

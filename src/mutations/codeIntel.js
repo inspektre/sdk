@@ -14,6 +14,7 @@ const setProjectCodeIntel = async (meta) => {
 
     if(result && result.data) {
         console.log("code intel is set");
+        return result.data.CreateCodeIntel.id;
     }
 };
 
