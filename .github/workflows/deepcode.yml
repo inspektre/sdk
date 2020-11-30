@@ -1,3 +1,4 @@
+name: "Inspektre Scan"
 on: push
 jobs:
   scan:
