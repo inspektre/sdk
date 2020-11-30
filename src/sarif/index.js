@@ -36,7 +36,7 @@ const consumeDCAISarif = async (sarifFile, projectName, version) => {
         });
     }
     dcaiMeta.tags = [...new Set(dcaiMeta.tags)];
-    await createSarif(dcaiMeta);
+    return await createSarif(dcaiMeta);
 };
 
 module.exports = {

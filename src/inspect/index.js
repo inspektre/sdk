@@ -34,20 +34,12 @@ const inspect =  async (data, threatLevel, checkSarif, sarif) => {
 
     // // Set Code Intel
     await setProjectCodeIntel(meta);
-    const scanRecordsPromise = new Promise((resolve, reject) => {
-        try {
-            const scanRecords = meta.repoResults.map(repoResult => {
-                return createScans(repoResult);
-            });
-            resolve(scanRecords);
-        }
-        catch(err) {
-            reject(err);
-        }    
-    });
+    const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
     
+    let sarifentries = null;
+
     if(checkSarif) {
-        await consumeDCAISarif(sarif, meta.projectName, meta.version);
+        sarifentries = await consumeDCAISarif(sarif, meta.projectName, meta.version);
     }
 
     // Set META
@@ -56,13 +48,7 @@ const inspect =  async (data, threatLevel, checkSarif, sarif) => {
     await setWeaknessMeta(meta.projectName);
     // TO-Do: 
     // Set All Metas
-
-    // scanRecordsPromise.then(recs => {
-    //     recs.forEach(r => console.log(r));
-    // })
-    // .catch(err => {
-    //     process.stderr.write('Failed retrieving scan records');
-    // })
+    // Sarif, Scans and Code Intel to Project
 };
 
 module.exports = {
