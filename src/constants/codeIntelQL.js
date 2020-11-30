@@ -51,7 +51,7 @@ mutation(
         classes: $classes,
         urls: $urls
     ) {
-        projectName
+        id
     }
 }
 `

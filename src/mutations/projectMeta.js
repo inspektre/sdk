@@ -1,7 +1,11 @@
 const {
     PROJECT_VERIFICATIONS_META,
     PROJECT_ATTACKS_META,
-    PROJECT_WEAKNESS_META
+    PROJECT_WEAKNESS_META,
+    PROJECT_SCANS_META,
+    PROJECT_CODEINTEL_META,
+    SARIF_PROJECTS_META,
+    CODE_INTEL_SCANS_META,
 } = require('../constants');
 const { client, handleErrors } = require('../util');
 
@@ -48,8 +52,68 @@ const setWeaknessMeta = async (projectName) => {
     }
 };
 
+const setScansMeta = async (projectName, version, scanId) => {
+    const result = await client.mutate({
+        mutation: PROJECT_SCANS_META,
+        variables: { projectName, version, scanId }
+    })
+    .catch(error => {
+        handleErrors(error);
+    });
+
+    if(result && result.data) {
+        return result.data.ScansProjectMeta;
+    }
+};
+
+const setProjectCodeIntelMeta = async (projectName, version, codeIntelId) => {
+    const result = await client.mutate({
+        mutation: PROJECT_CODEINTEL_META,
+        variables: { projectName, version, codeIntelId}
+    })
+    .catch(error => {
+        handleErrors(error);
+    });
+
+    if(result && result.data) {
+        console.log("Project's CodeIntel is now set.");
+    }
+};
+
+const setSarifProjectMeta = async (sarifId, projectName, version) => {
+    const result = await client.mutate({
+        mutation: SARIF_PROJECTS_META,
+        variables: {sarifId, projectName, version }
+    })
+    .catch(error => {
+        handleErrors(error);
+    });
+
+    if(result && result.data) {
+        console.log("Project's SARIF meta is complete.");
+    }
+};
+
+const setCodeIntelScansMeta = async (codeIntelId, projectName, version, scanId) => {
+    const result = await client.mutate({
+        mutation: CODE_INTEL_SCANS_META,
+        variables: { codeIntelId, projectName, version, scanId }
+    })
+    .catch(error => {
+        handleErrors(error);
+    });
+
+    if(result && result.data) {
+        return result.data.CodeIntelScansMeta;
+    }
+};
+
 module.exports = {
     setVerificationsMeta,
     setAttacksMeta,
-    setWeaknessMeta
+    setWeaknessMeta,
+    setScansMeta,
+    setProjectCodeIntelMeta,
+    setSarifProjectMeta,
+    setCodeIntelScansMeta
 };
