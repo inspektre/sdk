@@ -139,6 +139,21 @@ query($project: String!) {
   }
 }
 `
+const PROJECT_VERIFICATIONS_META = gql`
+mutation($projectName: String!) {
+  VerificationsMeta(projectName: $projectName)
+}
+`
+const PROJECT_ATTACKS_META = gql`
+mutation($projectName: String!) {
+  AttacksMeta(projectName: $projectName)
+}
+`
+const PROJECT_WEAKNESS_META = gql`
+mutation($projectName: String!) {
+  WeaknessProjectMeta(projectName: $projectName)
+}
+`
 
 module.exports = { 
   DELETE_PROJECT,
@@ -148,5 +163,8 @@ module.exports = {
   ALTER_PROJECT_TAGS,
   QUERY_PROJECTS,
   QUERY_PROJECT,
-  QUERY_PROJECT_EXISTS
+  QUERY_PROJECT_EXISTS,
+  PROJECT_VERIFICATIONS_META,
+  PROJECT_ATTACKS_META,
+  PROJECT_WEAKNESS_META
 };

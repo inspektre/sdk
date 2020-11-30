@@ -2,7 +2,18 @@ const { CREATE_SCANS } = require('../constants');
 const { client, handleErrors } = require('../util');
 
 const createScans = async (scanEntry) => {
-    const { projectName, version, dateScanned, ruleId, ruleName, fileName, startLocationLine, startLocationColumn, endLocationLine, endLocationColumn } = scanEntry;
+    const {
+        projectName,
+        version,
+        dateScanned,
+        ruleId,
+        ruleName,
+        fileName,
+        startLocationLine,
+        startLocationColumn,
+        endLocationLine,
+        endLocationColumn
+    } = scanEntry;
     const result = await client.mutate({
         mutation: CREATE_SCANS,
         variables: { 
@@ -23,7 +34,7 @@ const createScans = async (scanEntry) => {
     });
 
     if(result && result.data && result.data.CreateScans) {
-        process.stdout.write(`Recorded result: ${result.data.CreateScans.id}\n`)
+        return result.data.CreateScans.id;
     }
 };
 

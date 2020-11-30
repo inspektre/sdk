@@ -13,7 +13,8 @@ const createSarif = async (meta) => {
     });
 
     if(result && result.data) {
-        process.stdout.write(`SARIF Entry for ${result.data.CreateSarif.id} is now recorded\n`);
+        process.stdout.write(`SARIF Entry for is now recorded\n`);
+        return result.data.CreateSarif.id;
     }
 };
 
