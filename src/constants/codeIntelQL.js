@@ -11,6 +11,7 @@ query($projectName: String!) {
         exceptions
         classes
         urls
+        scanTags
     }
 }
 `
@@ -26,6 +27,7 @@ query($projectName: String!, $version: String!) {
         exceptions
         classes
         urls
+        scanTags
     }
 }
 `
@@ -39,7 +41,8 @@ mutation(
     $functions: Int!,
     $exceptions: Int!,
     $classes: Int!,
-    $urls: Int!
+    $urls: Int!,
+    $scanTags: [String]!
 ) {
     CreateCodeIntel(
         projectName: $projectName, 
@@ -49,7 +52,8 @@ mutation(
         functions: $functions, 
         exceptions: $exceptions, 
         classes: $classes,
-        urls: $urls
+        urls: $urls,
+        scanTags: $scanTags
     ) {
         id
     }

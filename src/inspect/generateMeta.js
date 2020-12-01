@@ -18,18 +18,19 @@ const generateMeta = (data) => {
     
     // This fails 
     meta.dateScanned = {formatted: new Date(data.metaData.dateScanned).toISOString() };
+    meta.scanTagsRaw = [];
     meta.scanTags = [];
     
     // Get unique Tags of Interest
     data.metaData.uniqueTags.forEach(uTag => {
         supportedNameTags.forEach(sTag => {
             if(uTag.indexOf(sTag) > -1) {
-                meta.scanTags.push(sTag);
+                meta.scanTagsRaw.push(sTag);
             }
         });
     });
-    meta.scanTags = [...new Set(meta.scanTags)];
-    meta.scanTags = meta.scanTags.map(tag => {
+    meta.scanTagsRaw = [...new Set(meta.scanTagsRaw)];
+    meta.scanTags = meta.scanTagsRaw.map(tag => {
         return {name_contains: tag};
     });
     // Get Scan Rule meta

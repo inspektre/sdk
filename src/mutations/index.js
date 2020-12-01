@@ -12,7 +12,9 @@ const {
     setScansMeta,
     setProjectCodeIntelMeta,
     setSarifProjectMeta,
-    setCodeIntelScansMeta
+    setSarifAttacksMeta,
+    setCodeIntelScansMeta,
+    setCodeIntelAttacksMeta
 } = require('./projectMeta');
 const { setProjectCodeIntel } = require('./codeIntel');
 const { createScans } = require('./scans')
@@ -34,5 +36,7 @@ module.exports = {
     setScansMeta,
     setProjectCodeIntelMeta,
     setSarifProjectMeta,
-    setCodeIntelScansMeta
+    setSarifAttacksMeta,
+    setCodeIntelScansMeta,
+    setCodeIntelAttacksMeta
 };
