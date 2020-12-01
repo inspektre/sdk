@@ -57,7 +57,7 @@ const inspect =  async (data, threatLevel, checkSarif, sarif) => {
     if(checkSarif) {
         const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
         await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
-        // await setSarifAttacksMeta(meta.projectName, sarifEntry);
+        await setSarifAttacksMeta(meta.projectName, sarifEntry);
     }
     
     await setVerificationsMeta(meta.projectName);
