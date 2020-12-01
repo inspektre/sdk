@@ -5,7 +5,9 @@ const {
     PROJECT_SCANS_META,
     PROJECT_CODEINTEL_META,
     SARIF_PROJECTS_META,
+    SARIF_ATTACKS_META,
     CODE_INTEL_SCANS_META,
+    CODE_INTEL_ATTACKS_META
 } = require('../constants');
 const { client, handleErrors } = require('../util');
 
@@ -108,6 +110,34 @@ const setCodeIntelScansMeta = async (codeIntelId, projectName, version, scanId) 
     }
 };
 
+const setCodeIntelAttacksMeta = async (projectName, codeIntelId) => {
+    const result = await client.mutate({
+        mutation: CODE_INTEL_ATTACKS_META,
+        variables: { projectName, codeIntelId }
+    })
+    .catch(error => {
+        handleErrors(error);
+    });
+
+    if(result && result.data) {
+        return result.data.CodeIntelAttacksMeta;
+    }
+};
+
+const setSarifAttacksMeta = async (projectName, sarifId) => {
+    const result = await client.mutate({
+        mutation: SARIF_ATTACKS_META,
+        variables: { projectName, sarifId }
+    })
+    .catch(error => {
+        handleErrors(error);
+    });
+
+    if(result && result.data) {
+        return result.data.SarifAttacksMeta;
+    }
+};
+
 module.exports = {
     setVerificationsMeta,
     setAttacksMeta,
@@ -115,5 +145,7 @@ module.exports = {
     setScansMeta,
     setProjectCodeIntelMeta,
     setSarifProjectMeta,
-    setCodeIntelScansMeta
+    setSarifAttacksMeta,
+    setCodeIntelScansMeta,
+    setCodeIntelAttacksMeta
 };

@@ -33,9 +33,20 @@ mutation($codeIntelId: ID!, $projectName: String!, $version: String!, $scanId: I
     CodeIntelScansMeta(codeIntelId: $codeIntelId, projectName: $projectName, version: $version, scanId: $scanId)
 }
 `
+const CODE_INTEL_ATTACKS_META = gql`
+mutation($projectName: String!, $codeIntelId: ID!) {
+  CodeIntelAttacksMeta(projectName: $projectName, codeIntelId: $codeIntelId)
+}
+`
+
 const SARIF_PROJECTS_META = gql`
 mutation($sarifId: ID!, $projectName: String!, $version: String!) {
     SarifProjectMeta(sarifId: $sarifId, projectName: $projectName, version: $version)
+}
+`
+const SARIF_ATTACKS_META = gql`
+mutation($projectName: String!, $sarifId: ID!) {
+  SarifAttacksMeta(projectName: $projectName, sarifId: $sarifId)
 }
 `
 
@@ -46,5 +57,7 @@ module.exports = {
     PROJECT_SCANS_META,
     PROJECT_CODEINTEL_META,
     CODE_INTEL_SCANS_META,
-    SARIF_PROJECTS_META
+    CODE_INTEL_ATTACKS_META,
+    SARIF_PROJECTS_META,
+    SARIF_ATTACKS_META
 };

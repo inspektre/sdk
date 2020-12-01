@@ -12,14 +12,16 @@ const {
     setScansMeta,
     setProjectCodeIntelMeta,
     setSarifProjectMeta,
-    setCodeIntelScansMeta
+    setSarifAttacksMeta,
+    setCodeIntelScansMeta,
+    setCodeIntelAttacksMeta
 } = require('../mutations');
 const { projectExists } = require('../queries');
 const { consumeDCAISarif } = require('../sarif');
 
 const inspect =  async (data, threatLevel, checkSarif, sarif) => {
     // Step #1: Generate Metadata and a Project
-    const meta = generateMeta(data)
+    const meta = generateMeta(data);
     // Create or Update a project by name with ThreatLevel
     if(await projectExists(meta.projectName)) {
         await alterProjectThreatLevel(meta.projectName, threatLevel);
@@ -55,14 +57,17 @@ const inspect =  async (data, threatLevel, checkSarif, sarif) => {
     if(checkSarif) {
         const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
         await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
+        // await setSarifAttacksMeta(meta.projectName, sarifEntry);
     }
-
-    // Set META
+    
     await setVerificationsMeta(meta.projectName);
     await setAttacksMeta(meta.projectName);
     await setWeaknessMeta(meta.projectName);
+    
+    await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
+    
+    // SARIF - Projects - Attacks Meta
     process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
-
 };
 
 module.exports = {
