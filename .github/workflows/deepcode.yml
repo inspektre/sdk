@@ -4,7 +4,7 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      -name : directory
+      - name : directory
         run: pwd
       - name: Checkout
         uses: actions/checkout@v2
