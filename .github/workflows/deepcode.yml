@@ -11,7 +11,7 @@ jobs:
         env:
           DEEPCODE_TOKEN: ${{secrets.DEEPCODE_TOKEN}}
       - name: codeintel
-        uses: inspektre/ApplicationInspector-Action@v1
+        uses: felixro/ApplicationInspector-Action@v1
       - name: setup-node
         uses: actions/setup-node@v2-beta
         with:
