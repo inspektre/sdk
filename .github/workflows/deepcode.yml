@@ -4,8 +4,6 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - name : directory
-        run: pwd
       - name: Checkout
         uses: actions/checkout@v2
       - name: Perform DeepCode analysis
@@ -15,7 +13,7 @@ jobs:
       - name: codeintel
         uses: inspektre/codeintel-gh@v1
         with:
-          location-to-scan: GITHUB_WORKSPACE
+          location-to-scan: pwd
       - name: setup-node
         uses: actions/setup-node@v2-beta
         with:
