@@ -10,12 +10,8 @@ jobs:
         uses: georgismitev/deepcode-code-scanning-analysis@master
         env:
           DEEPCODE_TOKEN: ${{secrets.DEEPCODE_TOKEN}}
-      - uses: actions/checkout@v2
-      - uses: inspektre/codeintel-gh@v1
-      - uses: actions/upload-artifact@v2
-        with:
-          name: AppInspectorResults
-          path: AppInspectorResults.json
+      - name: codeintel
+        uses: inspektre/codeintel-gh@v1
       - name: setup-node
         uses: actions/setup-node@v2-beta
         with:
@@ -26,15 +22,11 @@ jobs:
         run: |
           export PATH="$(yarn global bin):$PATH"
           yarn global add @inspektre/inspektre
-      - uses: actions/download-artifact@master
-        with:
-          name: AppInspectorResults
-          path: ~/
-      - name: inspektre scan
+      - name: inspektre inspect
         env:
           INSPEKTRE_TOKEN: ${{secrets.INSPEKTRE_TOKEN}}
           INSPEKTRE_CLIENT_ID: ${{secrets.INSPEKTRE_CLIENT_ID}}
           INSPEKTRE_CLIENT_SECRET: ${{secrets.INSPEKTRE_CLIENT_SECRET}}
         run: |
           ~/.npm-global/bin/inspektre reauthorize
-          ~/.npm-global/bin/inspektre inspect -f ~/AppInspectorResults.json --sarif output.sarif --deepcode
+          ~/.npm-global/bin/inspektre inspect -f ${{GITHUB_WORKSPACE}}/AppInspectorResults.json --sarif output.sarif --deepcode
