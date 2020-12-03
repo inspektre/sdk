@@ -11,9 +11,9 @@ const supportedNameTags = [
     "Credentials"
 ];
 
-const generateMeta = (data) => {
+const generateMeta = (project, data) => {
     const meta = {};
-    meta.projectName = data.metaData.applicationName;
+    meta.projectName = project;
     meta.version = data.metaData.sourceVersion || '0.0.1';
     
     // This fails 
