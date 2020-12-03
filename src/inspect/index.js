@@ -19,9 +19,9 @@ const {
 const { projectExists } = require('../queries');
 const { consumeDCAISarif } = require('../sarif');
 
-const inspect =  async (data, threatLevel, checkSarif, sarif) => {
+const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     // Step #1: Generate Metadata and a Project
-    const meta = generateMeta(data);
+    const meta = generateMeta(project, data);
     // Create or Update a project by name with ThreatLevel
     if(await projectExists(meta.projectName)) {
         await alterProjectThreatLevel(meta.projectName, threatLevel);
