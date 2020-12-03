@@ -4,10 +4,6 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - name: temp
-        run: |
-          ls $GITHUB_WORKSPACE
-          echo $GITHUB_WORKSPACE
       - name: Checkout
         uses: actions/checkout@v2
       - name: Perform DeepCode analysis
