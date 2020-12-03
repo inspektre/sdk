@@ -11,9 +11,7 @@ jobs:
         env:
           DEEPCODE_TOKEN: ${{secrets.DEEPCODE_TOKEN}}
       - name: codeintel
-        uses: inspektre/codeintel-gh@v1
-        with:
-          location-to-scan: pwd
+        uses: inspektre/ApplicationInspector-Action@v1
       - name: setup-node
         uses: actions/setup-node@v2-beta
         with:
