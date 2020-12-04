@@ -39,33 +39,33 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     
     /* Step #2: Record Scan Results */
     const codeIntelEntry = await setProjectCodeIntel(meta);
-    // console.log(codeIntelEntry);
-    // await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
-    // const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
+    console.log(codeIntelEntry);
+    await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
+    const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
 
     /* Step #3: Security Graphs */
-    // if(scanRecords) {
-    //     const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
-    //     if(prjktScanMeta) {
-    //         console.log('Project Scans Meta is set.');
-    //     }
+    if(scanRecords) {
+        const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
+        if(prjktScanMeta) {
+            console.log('Project Scans Meta is set.');
+        }
         
-    //    const codeIntlScanMeta = await Promise.all(scanRecords.map(scanId => setCodeIntelScansMeta(codeIntelEntry, meta.projectName, meta.version, scanId)));
-    //    if(codeIntlScanMeta) {
-    //        console.log('CodeIntel Scans Meta is set.');
-    //    }
-    // }
-    // if(checkSarif) {
-    //     const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
-    //     await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
-    //     await setSarifAttacksMeta(meta.projectName, sarifEntry);
-    // }
+       const codeIntlScanMeta = await Promise.all(scanRecords.map(scanId => setCodeIntelScansMeta(codeIntelEntry, meta.projectName, meta.version, scanId)));
+       if(codeIntlScanMeta) {
+           console.log('CodeIntel Scans Meta is set.');
+       }
+    }
+    if(checkSarif) {
+        const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
+        await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
+        await setSarifAttacksMeta(meta.projectName, sarifEntry);
+    }
     
-    // await setVerificationsMeta(meta.projectName);
-    // await setAttacksMeta(meta.projectName);
-    // await setWeaknessMeta(meta.projectName);
+    await setVerificationsMeta(meta.projectName);
+    await setAttacksMeta(meta.projectName);
+    await setWeaknessMeta(meta.projectName);
     
-    // await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
+    await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
     
     // SARIF - Projects - Attacks Meta
     process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
