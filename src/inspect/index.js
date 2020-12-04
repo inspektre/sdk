@@ -39,7 +39,6 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     
     /* Step #2: Record Scan Results */
     const codeIntelEntry = await setProjectCodeIntel(meta);
-    console.log(codeIntelEntry);
     await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
     const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
 

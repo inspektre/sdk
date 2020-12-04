@@ -9,7 +9,7 @@ mutation($projectName: String!, $version: String!, $toolName: String!, $tags: [S
         tags: $tags,
         createdAt: $createdAt
     ) {
-        id
+        sarifId
     }
 }
 `
