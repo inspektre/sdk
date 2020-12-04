@@ -98,6 +98,7 @@ query($project: String!) {
 const QUERY_PROJECT = gql`
 query($project: String!) {
   Project(filter: {name: $project}) {
+    projectId
     name
     threatLevel
     L1

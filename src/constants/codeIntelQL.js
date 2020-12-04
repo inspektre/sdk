@@ -3,6 +3,7 @@ const gql = require('graphql-tag');
 const QUERY_CODE_INTEL_BY_PROJECT = gql`
 query($projectName: String!) {
     CodeIntel(projectName: $projectName) {
+        codeIntelId
         projectName
         version
         dateScanned
@@ -19,6 +20,7 @@ query($projectName: String!) {
 const QUERY_CODE_INTEL_BY_PROJECT_VERSION = gql`
 query($projectName: String!, $version: String!) {
     CodeIntel(projectName: $projectName, version: $version) {
+        codeIntelId
         projectName
         version
         dateScanned

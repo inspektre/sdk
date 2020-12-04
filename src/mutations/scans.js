@@ -34,7 +34,7 @@ const createScans = async (scanEntry) => {
     });
 
     if(result && result.data && result.data.CreateScans) {
-        return result.data.CreateScans.id;
+        return result.data.CreateScans.scansId;
     }
 };
 
