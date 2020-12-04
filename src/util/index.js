@@ -10,6 +10,7 @@ const packageJson = require('../../package.json');
 
 dotenv.config({ path: path.join(homedir, '/.config/inspektre/.env') });
 
+
 const httpLink = new HttpLink({ uri: 'https://api.inspektre.io', fetch: fetch });
 
 const initConfig = (verbose) => {

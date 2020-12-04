@@ -57,7 +57,7 @@ mutation(
         urls: $urls,
         scanTags: $scanTags
     ) {
-        id
+        codeIntelId
     }
 }
 `
