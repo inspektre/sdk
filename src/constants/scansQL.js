@@ -25,7 +25,7 @@ mutation(
         endLocationLine: $endLocationLine
         endLocationColumn: $endLocationColumn
     ) {
-        id
+        scansId
     }
 }
 `
