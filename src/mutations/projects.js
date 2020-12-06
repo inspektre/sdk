@@ -49,7 +49,7 @@ const createProject = async (name, level, createdAt) => {
     }
 }
 
-const alterProjectThreatLevel = async (name, level) => {
+const alterProjectThreatLevel = async (name, projectId, level) => {
     // Defaulting to L1 by default.
     let threatLevel = 'L1';
     let L1 = true;
@@ -68,17 +68,17 @@ const alterProjectThreatLevel = async (name, level) => {
     
     const result = await client.mutate({
         mutation: ALTER_PROJECT_THREAT_LEVEL,
-        variables: { name, threatLevel, L1, L2, L3 }
+        variables: { name, projectId, threatLevel, L1, L2, L3 }
     });
     if(result && result.data) {
         process.stdout.write(`Project threat level altered: ${threatLevel}\n`);
     }
 };
 
-const alterProjectUpdated = async (name, updatedAt) => {
+const alterProjectUpdated = async (name, projectId, updatedAt) => {
     const result = await client.mutate({
         mutation: ALTER_PROECT_UPDATED,
-        variables: { name, updatedAt }
+        variables: { name, projectId, updatedAt }
     })
     .catch(error => {
         console.log(error);

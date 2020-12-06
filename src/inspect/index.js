@@ -23,14 +23,15 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     // Step #1: Generate Metadata and a Project
     const meta = generateMeta(project, data);
     // Create or Update a project by name with ThreatLevel
-    if(await projectExists(meta.projectName)) {
-        await alterProjectThreatLevel(meta.projectName, threatLevel);
+    const existingProject = await projectExists(meta.projectName)
+    if(existingProject) {
+        await alterProjectThreatLevel(existingProject.name, existingProject.projectId, threatLevel);
         // Update Time of change for existing proj.
         // To-Do: Combine these two mutations into one
         /* 
             Temporary patch for ISO String - GQL or APOC Bug
         */
-        await alterProjectUpdated(meta.projectName, generateDate(new Date().toISOString()));
+        await alterProjectUpdated(meta.projectName, existingProject.projectId, generateDate(new Date().toISOString()));
     }
     else {
         process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
@@ -42,7 +43,7 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
     const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
 
-    /* Step #3: Security Graphs */
+    // /* Step #3: Security Graphs */
     if(scanRecords) {
         const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
         if(prjktScanMeta) {
@@ -61,13 +62,13 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     }
     
     await setVerificationsMeta(meta.projectName);
-    await setAttacksMeta(meta.projectName);
     await setWeaknessMeta(meta.projectName);
+    await setAttacksMeta(meta.projectName);
     
     await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
     
-    // SARIF - Projects - Attacks Meta
-    process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
+    // // SARIF - Projects - Attacks Meta
+    // process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
 };
 
 module.exports = {

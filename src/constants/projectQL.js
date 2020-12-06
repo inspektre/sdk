@@ -18,8 +18,8 @@ mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L
 `
 
 const ALTER_PROJECT_THREAT_LEVEL = gql`
-mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!) {
-  UpdateProject(name: $name, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3) {
+mutation($name: String!, $projectId: ID!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L3: Boolean!) {
+  UpdateProject(name: $name, projectId: $projectId, threatLevel: $threatLevel, L1: $L1, L2: $L2, L3: $L3) {
     name
     threatLevel
     projectId
@@ -27,8 +27,8 @@ mutation($name: String!, $threatLevel: String!, $L1: Boolean!, $L2: Boolean!, $L
 }
 `
 const ALTER_PROECT_UPDATED = gql`
-mutation($name: String!, $updatedAt: _Neo4jDateTimeInput!) {
-  MergeProject(name: $name, updatedAt: $updatedAt) {
+mutation($name: String!, $projectId: ID!, $updatedAt: _Neo4jDateTimeInput!) {
+  MergeProject(name: $name, projectId: $projectId, updatedAt: $updatedAt) {
     name
     projectId
   }
@@ -48,6 +48,7 @@ mutation($name: String!, $tags: [String]) {
 const QUERY_PROJECTS = gql`
 query {
   Project {
+    projectId
     name
     threatLevel
     L1
