@@ -10,7 +10,7 @@ const projectExists = async (project) => {
     handleErrors(error);
   });
   if(result && result.data && result.data.Project.length > 0) {
-    return true;
+    return result.data.Project[0];
   }
   return;
 };
