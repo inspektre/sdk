@@ -136,8 +136,11 @@ program
   const threatLevel = options.threatLevel || null;
   const tags = options.tags ? options.tags.split(',') : null;
 
-  if(list) {
+  if(list && !project) {
     getProjects();
+  }
+  else if (project && list) {
+    getProject(project);
   }
   else if (project && remove) {
     deleteProject(project);
