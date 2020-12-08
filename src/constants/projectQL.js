@@ -50,46 +50,6 @@ query {
   Project {
     projectId
     name
-    threatLevel
-    L1
-    L2
-    L3
-    L4
-    tags
-    tier
-    verifications {
-      stage
-      serial
-    }
-    weaknessPatterns {
-      id
-      name
-      confidentiality
-      integrity
-      availability
-      accessControl
-    }
-    attackPatterns {
-      id
-      name
-      typicalSeverity
-      likelihoodOfAttack
-    }
-    requirementsMet {
-      stage
-      serial
-    }
-    weaknessSuppressed {
-      id
-      name
-      type
-    }
-    attacksSuppressed {
-			id
-      name
-      typicalSeverity
-      likelihoodOfAttack
-    }
   }
 }
 `
@@ -107,43 +67,6 @@ query($project: String!) {
   Project(filter: {name: $project}) {
     projectId
     name
-    threatLevel
-    L1
-    L2
-    L3
-    L4
-    tags
-    tier
-    verifications {
-      stage
-      serial
-    }
-    weaknessPatterns {
-      id
-      name
-      type
-    }
-    attackPatterns {
-      id
-      name
-      typicalSeverity
-      likelihoodOfAttack
-    }
-    requirementsMet {
-      stage
-      serial
-    }
-    weaknessSuppressed {
-      id
-      name
-      type
-    }
-    attacksSuppressed {
-	  id
-      name
-      typicalSeverity
-      likelihoodOfAttack
-    }
   }
 }
 `
