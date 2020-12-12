@@ -23,8 +23,10 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     // Step #1: Generate Metadata and a Project
     const meta = generateMeta(project, data);
     // Create or Update a project by name with ThreatLevel
-    const existingProject = await projectExists(meta.projectName)
-    if(existingProject) {
+    const existingProject = await projectExists(meta.projectName);
+    let projectId = null;
+    if(existingProject && threatLevel) {
+        projectId = existingProject.projectId;
         await alterProjectThreatLevel(existingProject.name, existingProject.projectId, threatLevel);
         // Update Time of change for existing proj.
         // To-Do: Combine these two mutations into one
@@ -35,10 +37,10 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     }
     else {
         process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
-        await createProject(meta.projectName, threatLevel, meta.dateScanned);
+        projectId = await createProject(meta.projectName, threatLevel, meta.dateScanned);
     }
     
-    /* Step #2: Record Scan Results */
+    // /* Step #2: Record Scan Results */
     const codeIntelEntry = await setProjectCodeIntel(meta);
     await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
     const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
@@ -64,7 +66,6 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     await setVerificationsMeta(meta.projectName);
     await setWeaknessMeta(meta.projectName);
     await setAttacksMeta(meta.projectName);
-    
     await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
     
     // // SARIF - Projects - Attacks Meta

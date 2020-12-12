@@ -46,6 +46,7 @@ const createProject = async (name, level, createdAt) => {
     
     if (result && result.data) {
         process.stdout.write(`Created project: ${name}\n`);
+        return result.data.CreateProject.projectId;
     }
 }
 
