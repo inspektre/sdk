@@ -9,7 +9,7 @@ const figures = require('figures');
 const chalk = require('chalk');
 const packageJson = require('../package.json');
 const { Auth, Refresh } = require('./auth');
-const { initConfig, fileExists } = require('./util');
+const { initConfig, fileExists, handleRequiredInputs, commaSeparatedRequirementsList } = require('./util');
 const {
   getProjects,
   getProject,
@@ -45,7 +45,7 @@ program
 .action((action) => {
   const version = action.version || false;
   if(version) {
-    console.log('inspektre v'.format(packageJson.version));
+    process.stdout.write('inspektre v'.concat(packageJson.version, '\n'));
   }
 });
 
@@ -64,12 +64,10 @@ program
 .description('inspect source-code for security intelligence')
 .requiredOption('-f, --file <file>', 'examine AppInspector from JSON file')
 .requiredOption('-p, --project <project>', 'set a project name')
-.option('--threatLevel <threatLevel>', 'Set project\'s threat level. Instance: L1, L2, L3')
 .option('--sarif <sarif>', 'Examine SARIF for intel')
 .option('--deepcode', 'Deepcode.ai to SARIF for intel')
 .action((options) => {
   let fileContent;
-  const threatLevel = options.threatLevel || 'L1';
   const deepcode = options.deepcode;
   const sarif = options.sarif;
   const project = options.project;
@@ -79,7 +77,7 @@ program
   }
   if (fileExists(options.file)) {
     fileContent = require(options.file);
-    inspect(project, fileContent, threatLevel, checkSarif, sarif);
+    inspect(project, fileContent, checkSarif, sarif);
   } else {
     process.stderr.write("No suitable code-intel was passed.\n");
   }
@@ -118,106 +116,26 @@ program
   });
 });
 
+
 program
-.command('projects')
-.description('Query for projects created on Inspektre')
-.option('-l, --list', 'List available Projects on Inspektre')
-.option('--project <project>', 'Query / Scope a project by name')
-.option('--remove', 'delete a project by projectname. Specify --project <name> ahead of --delete')
-.option('--create', 'Attempt to create a new project. Specify --project <name> to set name')
-.option('--threatLevel <threatLevel>', 'Change project\'s threat level. Instance: L1, L2, L3')
-.option('--tags <tags>', 'Add project tags. Instance: Web,SQL,http,tcp,confidentiality,integrity,availability,accesscontrol,authorization')
+.command('create')
+.description('Create a new project on Inspektre')
+.requiredOption('--projectName <projectName>', 'Set name for a new project')
+.requiredOption('--choice <choice>', 'Select a project choice')
+.requiredOption('--requirements <requirements>', 'select requirements that are relevant', commaSeparatedRequirementsList)
 .option('-v, --verbose', 'output extra information into the CLI')
 .action((options) => {
-  const list = options.list || false;
-  const project = options.project || null;
-  const remove = options.remove || false;
-  const create = options.create || false;
-  const threatLevel = options.threatLevel || null;
-  const tags = options.tags ? options.tags.split(',') : null;
-
-  if(list && !project) {
-    getProjects();
+  // Get a project name
+  const projectName = options.projectName;
+  // Get a choice and match - Static list
+  const projectOptions = ['web', 'api', 'cli', 'back-end' ,'scripts', 'etl', 'infrastructure', 'firmware', 'hardware'];
+  const choice = projectOptions.indexOf(options.choice) <= -1 ? options.choice: null;
+  // Check if choice is valid
+  if (choice) {
+    process.stderr.write(chalk.red(figures.main.cross).concat(' Please make a project choice.\nAvailable Choices: '.concat(chalk.green(projectOptions.toString(), '\n'))));
   }
-  else if (project && list) {
-    getProject(project);
-  }
-  else if (project && remove) {
-    deleteProject(project);
-  }
-  else if (project && threatLevel) {
-    alterProjectThreatLevel(project, threatLevel, new Date());
-  }
-  else if (project && tags) {
-    alterProjectTags(project, tags);
-  }
-  else if(project && create) {
-    alterProjectThreatLevel(project, L1);
-  }
-  else if (project) {
-    getProject(project);
-  }
-});
-
-program
-.command('attacks')
-.description('Query for general attack patterns on Inspektre by Likelihood, Severity, Tag OR Skill Level of a malicious actor')
-.option('--severity <severity>', 'comma separated values for attack severity. Instance: Critical,High,Medium,Low,"Very Low"')
-.option('--likelihood <likelihood>', 'comma separated values for attack likelihood. Instance: High,Medium,Low')
-.option('--tag <tag>', 'Simple Attack search  with tag. Instance: web SQL Email')
-.option('-v, --verbose', 'output extra information into the CLI')
-.option('--skill <skill>', 'Malicious Actor\'s Skill - Instance: High OR Medium OR Low')
-.action((options) => {
-  const severity = options.severity ? options.severity.split(',') : null;
-  const likelihood = options.likelihood ? options.likelihood.split(',') : null;
-  // Use this for multiple tags
-  // const tags = options.tags ? options.tags.split(',') : null;
-  const tag = options.tag ? options.tag : null;
-  const skill = options.skill ? options.skill : null;
-
-  if(skill && (tag || severity || likelihood)) {
-    process.stdout.write(chalk.red(figures.main.cross).concat(" CLI - Skill cannot yet be combined with sevrity or likelihood or tag\n"));
-  }
-  else if(tag && severity && likelihood) {
-    getAttackByTagSeverityLikelihood(tag, severity, likelihood)
-  }
-  else if(tag && severity) {
-    getAttackByTagSeverity(tag, severity);
-  }
-  else if(tag && likelihood) {
-    getAttackByTagLikelihood(tag, likelihood)
-  }
-  else if(likelihood && severity) {
-    getAttackByLikelihoodAndSeverity(likelihood, severity);
-  }
-  else if(tag) {
-    getAttackByTag(tag);
-  }
-  else if(severity) {
-    getAttackBySeverity(severity);
-  }
-  else if(likelihood) {
-    getAttackByLikelihood(likelihood);
-  }
-  else if(skill) {
-    getAttackBySkill(skill);
-  }
-  else {
-    program.help();
-  }
-  
-});
-
-
-program
-.command('weakness')
-.description('Query for weaknesses in Inspektre')
-.option('--tags <tags>', 'search for weaknesses by tags - owasp-2017,sw,hw,top-25,architecture,software-fault-patterns')
-.action((options) => {
-  const tags = options.tags ? options.tags.split(',') : null;
-  if(tags) {
-    getWeaknessesOwasp(tags);
-  }
+  const requirements = options.requirements;
+  console.log(requirements);
 });
 
 

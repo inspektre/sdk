@@ -1,7 +1,6 @@
 const {
     deleteProject,
     createProject,
-    alterProjectThreatLevel,
     alterProjectTags,
     alterProjectUpdated
 } = require('./projects');
@@ -24,7 +23,6 @@ const { createSarif } = require('./sarif');
 module.exports = {
     deleteProject,
     createProject,
-    alterProjectThreatLevel,
     alterProjectUpdated,
     alterProjectTags,
     setProjectCodeIntel,

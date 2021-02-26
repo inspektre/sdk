@@ -1,7 +1,6 @@
 const {
     DELETE_PROJECT,
     CREATE_PROJECT,
-    ALTER_PROJECT_THREAT_LEVEL,
     ALTER_PROJECT_TAGS,
     ALTER_PROECT_UPDATED
 } = require('../constants');
@@ -21,24 +20,30 @@ const deleteProject = async (name) => {
     }
 };
 
-const createProject = async (name, level, createdAt) => {
-    let threatLevel = 'L1';
-    let L1 = true;
-    let L2 = false;
-    let L3 = false;
-    if (level === 'L3') {
-        threatLevel = 'L3';
-        L3 = true;
-        L1 = false;
-    }
-    else if (level === 'L2') {
-        threatLevel = 'L2';
-        L1 = false;
-        L2 = true;
-    }
+const createProject = async (
+    name,
+    type,
+    requirements,
+    lane,
+    likelihood,
+    severity,
+    skill,
+    maturityModel,
+    createdAt
+    ) => {
     const result = await client.mutate({
         mutation: CREATE_PROJECT,
-        variables: { name, threatLevel, L1, L2, L3, createdAt }
+        variables: { 
+            name,
+            type,
+            requirements,
+            lane,
+            likelihood,
+            severity,
+            skill,
+            maturityModel,
+            createdAt
+        }
     })
     .catch(error => {
         handleErrors(error);
@@ -50,31 +55,6 @@ const createProject = async (name, level, createdAt) => {
     }
 }
 
-const alterProjectThreatLevel = async (name, projectId, level) => {
-    // Defaulting to L1 by default.
-    let threatLevel = 'L1';
-    let L1 = true;
-    let L2 = false;
-    let L3 = false;
-    if (level === 'L3') {
-        threatLevel = 'L3';
-        L3 = true;
-        L1 = false;
-    }
-    else if (level === 'L2') {
-        threatLevel = 'L2';
-        L1 = false;
-        L2 = true;
-    }
-    
-    const result = await client.mutate({
-        mutation: ALTER_PROJECT_THREAT_LEVEL,
-        variables: { name, projectId, threatLevel, L1, L2, L3 }
-    });
-    if(result && result.data) {
-        process.stdout.write(`Project threat level altered: ${threatLevel}\n`);
-    }
-};
 
 const alterProjectUpdated = async (name, projectId, updatedAt) => {
     const result = await client.mutate({
@@ -105,7 +85,6 @@ const alterProjectTags = async (name, tags) => {
 module.exports = {
     deleteProject,
     createProject,
-    alterProjectThreatLevel,
     alterProjectUpdated,
     alterProjectTags
 };
