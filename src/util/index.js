@@ -143,6 +143,8 @@ const availableLanes = [
     'redLane'
 ];
 
+const availableModels = ['BSIMM', 'OpenSAMM'];
+
 const commaSeparatedRequirementsList = (values) => {
     return [...new Set(values.split(',').map((val) => {
         const num = isNaN(parseInt(val))? 0: parseInt(val);
@@ -152,7 +154,20 @@ const commaSeparatedRequirementsList = (values) => {
             }
         })
     }))].map((selection) => selection.chapter);
+};
+
+const checkFloatRange = (range) => {
+    const num  = isNaN(parseFloat(range))? 0: parseFloat(range)
+    if (num <= 1.0 && num >= 0.0 ) {
+        return num
+    } else {
+        return 0
+    }
+};
+
+const modelSelection = (model) => {
+    return availableModels.indexOf(model) > -1 ? model: false
 }
 
 
-module.exports = { client, initConfig, handleErrors, handleRequiredInputs, fileExists, generateDate, commaSeparatedRequirementsList, requirementsAvailable, availableLanes };
+module.exports = { client, initConfig, handleErrors, handleRequiredInputs, fileExists, generateDate, commaSeparatedRequirementsList, requirementsAvailable, availableLanes, checkFloatRange, availableModels, modelSelection};

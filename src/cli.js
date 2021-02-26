@@ -9,7 +9,17 @@ const figures = require('figures');
 const chalk = require('chalk');
 const packageJson = require('../package.json');
 const { Auth, Refresh } = require('./auth');
-const { initConfig, fileExists, commaSeparatedRequirementsList, projectLaneSelection, requirementsAvailable, availableLanes } = require('./util');
+const {
+  initConfig, 
+  fileExists,
+  commaSeparatedRequirementsList,
+  projectLaneSelection,
+  requirementsAvailable,
+  availableLanes,
+  checkFloatRange,
+  modelSelection,
+  availableModels
+} = require('./util');
 const {
   getProjects,
   getProject,
@@ -124,10 +134,14 @@ program
 .requiredOption('--choice <choice>', 'Select a project choice')
 .requiredOption('--requirements <requirements>', 'select requirements that are relevant', commaSeparatedRequirementsList)
 .requiredOption('--lane <lane>', 'Select a project lane', projectLaneSelection)
+.requiredOption('--likelihood <likelihood>', 'Project-specific attack likelihood in a range of 0-1', checkFloatRange)
+.requiredOption('--severity <severity>', 'Project-specific attack severity in a range of 0-1', checkFloatRange)
+.requiredOption('--skill <skill>', 'Project-specific skill rating for a malicious actor in a range of 0-1', checkFloatRange)
+.requiredOption('--maturityModel <maturityModel>', 'Choose between OpenSAMM and BSIMM Maturity Models', modelSelection)
 .option('-v, --verbose', 'output extra information into the CLI')
 .action((options) => {
   // Get a project name
-  const projectName = options.projectName;
+  const { projectName, likelihood, severity, skill, requirements, maturityModel } = options;
   // Get a choice and match - Static list
   const projectOptions = ['web', 'api', 'cli', 'back-end' ,'scripts', 'etl', 'infrastructure', 'firmware', 'hardware'];
   const choice = projectOptions.indexOf(options.choice) > -1 ? options.choice: null;
@@ -136,16 +150,20 @@ program
       return avLane;
     }
   });
+  
   // Check if choice is valid
-  if (projectName === undefined || projectName === null || choice === null || lane === undefined) {
+  if (projectName === undefined || projectName === null || choice === null || lane === undefined || !maturityModel) {
     process.stderr.write(chalk.red(figures.main.cross).concat(' Please ensure that the correct choices are used '.concat('\n')));
-    setTimeout(() => {
-      process.exit(-1);
-    }, 1000);
+    process.stderr.write(chalk.green("Type inspektre list -h for more options\n"));
+    // setTimeout(() => {
+    //   process.exit(-1);
+    // }, 1000);
   } else {
-    const requirements = options.requirements;
     console.log(projectName, choice, requirements, lane);
+    console.log(likelihood, severity, skill);
+    console.log(maturityModel);
   }
+
 });
 
 program
@@ -153,6 +171,7 @@ program
 .description('Selection of options for project')
 .option('--choices', 'use this option to list available choices for project')
 .option('--lanes', 'use this option to list available project lanes')
+.option('--maturityModels', 'use this option to list supported maturity models')
 .action((options) => {
   if(options.choices) {
     requirementsAvailable.forEach(req => {
@@ -176,6 +195,12 @@ program
           break;
       }
     });
+  }
+  if (options.maturityModels) {
+    process.stdout.write("Available Maturity Models: ".concat('\n'))
+    availableModels.forEach((avModel, idx) => {
+      process.stdout.write(chalk.green(idx).concat(" ", avModel, "\n"));
+    })
   }
 });
 
