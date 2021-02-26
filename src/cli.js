@@ -56,30 +56,6 @@ program
   const verbose = options.verbose || false;
   initConfig(verbose);
 });
-// Get code-intel from file
-program
-.command('inspect')
-.description('inspect source-code for security intelligence')
-.requiredOption('-f, --file <file>', 'examine AppInspector from JSON file')
-.requiredOption('-p, --project <project>', 'set a project name')
-.option('--sarif <sarif>', 'Examine SARIF for intel')
-.option('--deepcode', 'Deepcode.ai to SARIF for intel')
-.action((options) => {
-  let fileContent;
-  const deepcode = options.deepcode;
-  const sarif = options.sarif;
-  const project = options.project;
-  let checkSarif = false;
-  if (fileExists(sarif) && deepcode) {
-    checkSarif = true;
-  }
-  if (fileExists(options.file)) {
-    fileContent = require(options.file);
-    inspect(project, fileContent, checkSarif, sarif);
-  } else {
-    process.stderr.write("No suitable code-intel was passed.\n");
-  }
-});
 
 // Login Action
 program
@@ -115,6 +91,7 @@ program
 });
 
 
+// Create a new project with mandatory options
 program
 .command('create')
 .description('Create a new project on Inspektre')
@@ -150,28 +127,40 @@ program
     // Ensure ISO Formatted is used and  capture locat TZ
     const createdAt = {formatted: new Date().toISOString() }
     const name = projectName;
-    createProject(
-      name,
-      type,
-      requirements,
-      lane,
-      likelihood,
-      severity,
-      skill,
-      maturityModel,
-      createdAt,
-    )
-    .then(()=> {
-      process.stdout.write(chalk.green(figures.main.tick).concat("Project has been created\n"));
-      // projectID is ready for consumption
+    // Perform Auth silently
+    const verbose = false
+    Refresh(verbose)
+    .then(() => {
+      process.stdout.write(chalk.green('CLI ready for use\n'));
+      // Create a 3.5 second delay to assume Auth refresh was successful
+      createProject(
+        name,
+        type,
+        requirements,
+        lane,
+        likelihood,
+        severity,
+        skill,
+        maturityModel,
+        createdAt,
+      )
+      .then(()=> {
+        process.stdout.write(chalk.green(figures.main.tick).concat("Project has been created\n"));
+        // projectID is ready for consumption
+      })
+      .catch(err => {
+        process.stderr.write(chalk.red(figures.main.cross).concat("An error in creating project. Please ensure unique name OR roles & permissions to proceed.\n"));
+      })
     })
     .catch(err => {
-      process.stderr.write(chalk.red(figures.main.cross).concat("An error in creating project. Please ensure unique name OR roles & permissions to proceed.\n"));
+      process.stderr.write(chalk.red(figures.main.cross).concat(" Auth Failure\n"));
+      process.stdout.write("Try inspektre authorize OR inspektre authorize --headless to start authentication\n");
     })
   }
 
 });
 
+// List options for selections
 program
 .command('list')
 .description('Selection of options for project')
@@ -179,11 +168,13 @@ program
 .option('--lanes', 'use this option to list available project lanes')
 .option('--maturityModels', 'use this option to list supported maturity models')
 .action((options) => {
+  // Choices for type of a project
   if(options.choices) {
     requirementsAvailable.forEach(req => {
       process.stdout.write(chalk.green(req.id).concat(' ', req.chapter, '\n'));
     })
   }
+  // Choices for project lane
   if(options.lanes) {
     process.stdout.write("Available lanes: ".concat('\n'))
     availableLanes.forEach(avLane => {
@@ -202,6 +193,7 @@ program
       }
     });
   }
+  // Choices for maturity model
   if (options.maturityModels) {
     process.stdout.write("Available Maturity Models: ".concat('\n'))
     availableModels.forEach((avModel, idx) => {
@@ -210,23 +202,33 @@ program
   }
 });
 
-// Perform Auth silently
-const verbose = false
-Refresh(verbose)
-.then(() => {
-  process.stdout.write(chalk.green('CLI ready for use\n'));
-  // Create a 3.5 second delay to assume Auth refresh was successful
-  setTimeout(() => {
-    if(process.argv.length > 2) {
-      program.parse(process.argv);
-    }
-    else {
-      program.help();
-    }
-  }, 3500)
+// 
+program
+.command('inspect')
+.description('inspect source-code to security intelligence & security weaknesses')
+.requiredOption('-f, --file <file>', 'examine AppInspector from JSON file')
+.requiredOption('-p, --project <project>', 'set a project name')
+.option('--sarif <sarif>', 'Examine SARIF for intel')
+.action((options) => {
+  let fileContent;
+  const sarif = options.sarif;
+  const project = options.project;
+  let checkSarif = false;
+  if (fileExists(sarif)) {
+    checkSarif = true;
+  }
+  if (fileExists(options.file)) {
+    fileContent = require(options.file);
+    inspect(project, fileContent, checkSarif, sarif);
+  } else {
+    process.stderr.write("No suitable code-intel was passed.\n");
+  }
+});
 
-})
-.catch(err => {
-  process.stderr.write(chalk.red(figures.main.cross).concat(" Auth Failure\n"));
-  process.stdout.write("Try inspektre authorize OR inspektre authorize --headless to start authentication\n");
-})
+
+if(process.argv.length > 2) {
+  program.parse(process.argv);
+}
+else {
+  program.help();
+}
