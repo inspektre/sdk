@@ -202,7 +202,7 @@ program
   }
 });
 
-// 
+// Inspect code and gather intelligence
 program
 .command('inspect')
 .description('inspect source-code to security intelligence & security weaknesses')
