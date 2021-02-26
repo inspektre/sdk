@@ -147,13 +147,11 @@ program
     //   process.exit(-1);
     // }, 1000);
   } else {
-    console.log(projectName, type, requirements, lane);
-    console.log(likelihood, severity, skill);
-    console.log(maturityModel);
+    // Ensure ISO Formatted is used and  capture locat TZ
     const createdAt = {formatted: new Date().toISOString() }
-    console.log(createdAt);
-    createProject({
-      name: projectName,
+    const name = projectName;
+    createProject(
+      name,
       type,
       requirements,
       lane,
@@ -162,13 +160,13 @@ program
       skill,
       maturityModel,
       createdAt,
-    })
-    .then(projectId => {
+    )
+    .then(()=> {
       process.stdout.write(chalk.green(figures.main.tick).concat("Project has been created\n"));
-      console.log(projectId);
+      // projectID is ready for consumption
     })
     .catch(err => {
-      console.log("error in creating project");
+      process.stderr.write(chalk.red(figures.main.cross).concat("An error in creating project. Please ensure unique name OR roles & permissions to proceed.\n"));
     })
   }
 
@@ -212,9 +210,23 @@ program
   }
 });
 
-if(process.argv.length > 2) {
-  program.parse(process.argv);
-}
-else {
-  program.help();
-}
+// Perform Auth silently
+const verbose = false
+Refresh(verbose)
+.then(() => {
+  process.stdout.write(chalk.green('CLI ready for use\n'));
+  // Create a 3.5 second delay to assume Auth refresh was successful
+  setTimeout(() => {
+    if(process.argv.length > 2) {
+      program.parse(process.argv);
+    }
+    else {
+      program.help();
+    }
+  }, 3500)
+
+})
+.catch(err => {
+  process.stderr.write(chalk.red(figures.main.cross).concat(" Auth Failure\n"));
+  process.stdout.write("Try inspektre authorize OR inspektre authorize --headless to start authentication\n");
+})

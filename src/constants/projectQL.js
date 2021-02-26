@@ -18,8 +18,8 @@ const CREATE_PROJECT = gql`
     $likelihood: Float!
     $severity: Float!
     $skill: Float!
-    $riskScore: Float!
     $maturityModel: String!
+    $createdAt: _Neo4jDateTimeInput!
   ) {
     CreateProject(
       name: $name
@@ -29,8 +29,8 @@ const CREATE_PROJECT = gql`
       likelihood: $likelihood
       severity: $severity
       skill: $skill
-      riskScore: $riskScore
       maturityModel: $maturityModel
+      createdAt: $createdAt
     ) {
       projectId
     }

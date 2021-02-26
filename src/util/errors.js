@@ -2,20 +2,17 @@ const figures = require('figures');
 const chalk = require('chalk');
 
 const handleErrors = (error) => {
+    console.dir(error.networkError.result.errors)
     if(error.ApolloError) {
         process.stderr.write(chalk.red(figures.main.cross).concat("Configuration error occured.\n"));
         process.exit(-1)
     }
-    else if(error.graphQLErrors) {
-        process.stderr.write(chalk.red(figures.main.cross).concat("Data Formattting errors\n"));
+    if(error.graphQLErrors) {
+        process.stderr.write(chalk.red(figures.main.cross).concat("Error occured in data formatting OR duplicate could not be created\n"));
         process.exit(-1);
     }
-    else if (error.networkError) {
+    if (error.networkError) {
         process.stderr.write(chalk.red(figures.main.cross).concat(" Network error occured.\n"));
-        process.exit(-1);
-    }
-    else {
-        process.stderr.write(chalk.red(figures.main.cross).concat("Unknown error\n"));
         process.exit(-1);
     }
 };
