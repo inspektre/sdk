@@ -20,20 +20,8 @@ const {
   modelSelection,
   availableModels
 } = require('./util');
-const {
-  getProjects,
-  getProject,
-  getAttackByTag,
-  getAttackBySeverity,
-  getAttackByLikelihood,
-  getAttackByLikelihoodAndSeverity,
-  getAttackByTagLikelihood,
-  getAttackByTagSeverity,
-  getAttackByTagSeverityLikelihood, 
-  getAttackBySkill,
-  getWeaknessesOwasp
-} = require('./queries');
-const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./mutations');
+
+const { createProject } = require('./mutations');
 const { inspect } = require('./inspect');
 
 const dotenv = require('dotenv');
@@ -144,7 +132,7 @@ program
   const { projectName, likelihood, severity, skill, requirements, maturityModel } = options;
   // Get a choice and match - Static list
   const projectOptions = ['web', 'api', 'cli', 'back-end' ,'scripts', 'etl', 'infrastructure', 'firmware', 'hardware'];
-  const choice = projectOptions.indexOf(options.choice) > -1 ? options.choice: null;
+  const type = projectOptions.indexOf(options.choice) > -1 ? options.choice: null;
   const lane = availableLanes.find((avLane) => {
     if(avLane == options.lane) {
       return avLane;
@@ -152,16 +140,36 @@ program
   });
   
   // Check if choice is valid
-  if (projectName === undefined || projectName === null || choice === null || lane === undefined || !maturityModel) {
+  if (projectName === undefined || projectName === null || type === null || lane === undefined || !maturityModel) {
     process.stderr.write(chalk.red(figures.main.cross).concat(' Please ensure that the correct choices are used '.concat('\n')));
     process.stderr.write(chalk.green("Type inspektre list -h for more options\n"));
     // setTimeout(() => {
     //   process.exit(-1);
     // }, 1000);
   } else {
-    console.log(projectName, choice, requirements, lane);
+    console.log(projectName, type, requirements, lane);
     console.log(likelihood, severity, skill);
     console.log(maturityModel);
+    const createdAt = {formatted: new Date().toISOString() }
+    console.log(createdAt);
+    createProject({
+      name: projectName,
+      type,
+      requirements,
+      lane,
+      likelihood,
+      severity,
+      skill,
+      maturityModel,
+      createdAt,
+    })
+    .then(projectId => {
+      process.stdout.write(chalk.green(figures.main.tick).concat("Project has been created\n"));
+      console.log(projectId);
+    })
+    .catch(err => {
+      console.log("error in creating project");
+    })
   }
 
 });
