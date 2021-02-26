@@ -9,21 +9,19 @@ const figures = require('figures');
 const chalk = require('chalk');
 const packageJson = require('../package.json');
 const { Auth, Refresh } = require('./auth');
-const { initConfig, fileExists } = require('./util');
 const {
-  getProjects,
-  getProject,
-  getAttackByTag,
-  getAttackBySeverity,
-  getAttackByLikelihood,
-  getAttackByLikelihoodAndSeverity,
-  getAttackByTagLikelihood,
-  getAttackByTagSeverity,
-  getAttackByTagSeverityLikelihood, 
-  getAttackBySkill,
-  getWeaknessesOwasp
-} = require('./queries');
-const { deleteProject, alterProjectThreatLevel, alterProjectTags } = require('./mutations');
+  initConfig, 
+  fileExists,
+  commaSeparatedRequirementsList,
+  projectLaneSelection,
+  requirementsAvailable,
+  availableLanes,
+  checkFloatRange,
+  modelSelection,
+  availableModels
+} = require('./util');
+
+const { createProject } = require('./mutations');
 const { inspect } = require('./inspect');
 
 const dotenv = require('dotenv');
@@ -45,7 +43,7 @@ program
 .action((action) => {
   const version = action.version || false;
   if(version) {
-    console.log('inspektre v'.format(packageJson.version));
+    process.stdout.write('inspektre v'.concat(packageJson.version, '\n'));
   }
 });
 
@@ -57,32 +55,6 @@ program
 .action((options) => {
   const verbose = options.verbose || false;
   initConfig(verbose);
-});
-// Get code-intel from file
-program
-.command('inspect')
-.description('inspect source-code for security intelligence')
-.requiredOption('-f, --file <file>', 'examine AppInspector from JSON file')
-.requiredOption('-p, --project <project>', 'set a project name')
-.option('--threatLevel <threatLevel>', 'Set project\'s threat level. Instance: L1, L2, L3')
-.option('--sarif <sarif>', 'Examine SARIF for intel')
-.option('--deepcode', 'Deepcode.ai to SARIF for intel')
-.action((options) => {
-  let fileContent;
-  const threatLevel = options.threatLevel || 'L1';
-  const deepcode = options.deepcode;
-  const sarif = options.sarif;
-  const project = options.project;
-  let checkSarif = false;
-  if (fileExists(sarif) && deepcode) {
-    checkSarif = true;
-  }
-  if (fileExists(options.file)) {
-    fileContent = require(options.file);
-    inspect(project, fileContent, threatLevel, checkSarif, sarif);
-  } else {
-    process.stderr.write("No suitable code-intel was passed.\n");
-  }
 });
 
 // Login Action
@@ -118,105 +90,138 @@ program
   });
 });
 
+
+// Create a new project with mandatory options
 program
-.command('projects')
-.description('Query for projects created on Inspektre')
-.option('-l, --list', 'List available Projects on Inspektre')
-.option('--project <project>', 'Query / Scope a project by name')
-.option('--remove', 'delete a project by projectname. Specify --project <name> ahead of --delete')
-.option('--create', 'Attempt to create a new project. Specify --project <name> to set name')
-.option('--threatLevel <threatLevel>', 'Change project\'s threat level. Instance: L1, L2, L3')
-.option('--tags <tags>', 'Add project tags. Instance: Web,SQL,http,tcp,confidentiality,integrity,availability,accesscontrol,authorization')
+.command('create')
+.description('Create a new project on Inspektre')
+.requiredOption('--projectName <projectName>', 'Set name for a new project')
+.requiredOption('--choice <choice>', 'Select a project choice')
+.requiredOption('--requirements <requirements>', 'select requirements that are relevant', commaSeparatedRequirementsList)
+.requiredOption('--lane <lane>', 'Select a project lane', projectLaneSelection)
+.requiredOption('--likelihood <likelihood>', 'Project-specific attack likelihood in a range of 0-1', checkFloatRange)
+.requiredOption('--severity <severity>', 'Project-specific attack severity in a range of 0-1', checkFloatRange)
+.requiredOption('--skill <skill>', 'Project-specific skill rating for a malicious actor in a range of 0-1', checkFloatRange)
+.requiredOption('--maturityModel <maturityModel>', 'Choose between OpenSAMM and BSIMM Maturity Models', modelSelection)
 .option('-v, --verbose', 'output extra information into the CLI')
 .action((options) => {
-  const list = options.list || false;
-  const project = options.project || null;
-  const remove = options.remove || false;
-  const create = options.create || false;
-  const threatLevel = options.threatLevel || null;
-  const tags = options.tags ? options.tags.split(',') : null;
-
-  if(list && !project) {
-    getProjects();
-  }
-  else if (project && list) {
-    getProject(project);
-  }
-  else if (project && remove) {
-    deleteProject(project);
-  }
-  else if (project && threatLevel) {
-    alterProjectThreatLevel(project, threatLevel, new Date());
-  }
-  else if (project && tags) {
-    alterProjectTags(project, tags);
-  }
-  else if(project && create) {
-    alterProjectThreatLevel(project, L1);
-  }
-  else if (project) {
-    getProject(project);
-  }
-});
-
-program
-.command('attacks')
-.description('Query for general attack patterns on Inspektre by Likelihood, Severity, Tag OR Skill Level of a malicious actor')
-.option('--severity <severity>', 'comma separated values for attack severity. Instance: Critical,High,Medium,Low,"Very Low"')
-.option('--likelihood <likelihood>', 'comma separated values for attack likelihood. Instance: High,Medium,Low')
-.option('--tag <tag>', 'Simple Attack search  with tag. Instance: web SQL Email')
-.option('-v, --verbose', 'output extra information into the CLI')
-.option('--skill <skill>', 'Malicious Actor\'s Skill - Instance: High OR Medium OR Low')
-.action((options) => {
-  const severity = options.severity ? options.severity.split(',') : null;
-  const likelihood = options.likelihood ? options.likelihood.split(',') : null;
-  // Use this for multiple tags
-  // const tags = options.tags ? options.tags.split(',') : null;
-  const tag = options.tag ? options.tag : null;
-  const skill = options.skill ? options.skill : null;
-
-  if(skill && (tag || severity || likelihood)) {
-    process.stdout.write(chalk.red(figures.main.cross).concat(" CLI - Skill cannot yet be combined with sevrity or likelihood or tag\n"));
-  }
-  else if(tag && severity && likelihood) {
-    getAttackByTagSeverityLikelihood(tag, severity, likelihood)
-  }
-  else if(tag && severity) {
-    getAttackByTagSeverity(tag, severity);
-  }
-  else if(tag && likelihood) {
-    getAttackByTagLikelihood(tag, likelihood)
-  }
-  else if(likelihood && severity) {
-    getAttackByLikelihoodAndSeverity(likelihood, severity);
-  }
-  else if(tag) {
-    getAttackByTag(tag);
-  }
-  else if(severity) {
-    getAttackBySeverity(severity);
-  }
-  else if(likelihood) {
-    getAttackByLikelihood(likelihood);
-  }
-  else if(skill) {
-    getAttackBySkill(skill);
-  }
-  else {
-    program.help();
-  }
+  // Get a project name
+  const { projectName, likelihood, severity, skill, requirements, maturityModel } = options;
+  // Get a choice and match - Static list
+  const projectOptions = ['web', 'api', 'cli', 'back-end' ,'scripts', 'etl', 'infrastructure', 'firmware', 'hardware'];
+  const type = projectOptions.indexOf(options.choice) > -1 ? options.choice: null;
+  const lane = availableLanes.find((avLane) => {
+    if(avLane == options.lane) {
+      return avLane;
+    }
+  });
   
+  // Check if choice is valid
+  if (projectName === undefined || projectName === null || type === null || lane === undefined || !maturityModel) {
+    process.stderr.write(chalk.red(figures.main.cross).concat(' Please ensure that the correct choices are used '.concat('\n')));
+    process.stderr.write(chalk.green("Type inspektre list -h for more options\n"));
+    // setTimeout(() => {
+    //   process.exit(-1);
+    // }, 1000);
+  } else {
+    // Ensure ISO Formatted is used and  capture locat TZ
+    const createdAt = {formatted: new Date().toISOString() }
+    const name = projectName;
+    // Perform Auth silently
+    const verbose = false
+    Refresh(verbose)
+    .then(() => {
+      process.stdout.write(chalk.green('CLI ready for use\n'));
+      // Create a 3.5 second delay to assume Auth refresh was successful
+      createProject(
+        name,
+        type,
+        requirements,
+        lane,
+        likelihood,
+        severity,
+        skill,
+        maturityModel,
+        createdAt,
+      )
+      .then(()=> {
+        process.stdout.write(chalk.green(figures.main.tick).concat("Project has been created\n"));
+        // projectID is ready for consumption
+      })
+      .catch(err => {
+        process.stderr.write(chalk.red(figures.main.cross).concat("An error in creating project. Please ensure unique name OR roles & permissions to proceed.\n"));
+      })
+    })
+    .catch(err => {
+      process.stderr.write(chalk.red(figures.main.cross).concat(" Auth Failure\n"));
+      process.stdout.write("Try inspektre authorize OR inspektre authorize --headless to start authentication\n");
+    })
+  }
+
 });
 
-
+// List options for selections
 program
-.command('weakness')
-.description('Query for weaknesses in Inspektre')
-.option('--tags <tags>', 'search for weaknesses by tags - owasp-2017,sw,hw,top-25,architecture,software-fault-patterns')
+.command('list')
+.description('Selection of options for project')
+.option('--choices', 'use this option to list available choices for project')
+.option('--lanes', 'use this option to list available project lanes')
+.option('--maturityModels', 'use this option to list supported maturity models')
 .action((options) => {
-  const tags = options.tags ? options.tags.split(',') : null;
-  if(tags) {
-    getWeaknessesOwasp(tags);
+  // Choices for type of a project
+  if(options.choices) {
+    requirementsAvailable.forEach(req => {
+      process.stdout.write(chalk.green(req.id).concat(' ', req.chapter, '\n'));
+    })
+  }
+  // Choices for project lane
+  if(options.lanes) {
+    process.stdout.write("Available lanes: ".concat('\n'))
+    availableLanes.forEach(avLane => {
+      switch(avLane) {
+        case 'greenLane':
+          process.stdout.write(chalk.green(avLane).concat('\n'));
+          break;
+        case 'yellowLane':
+          process.stdout.write(chalk.yellowBright(avLane).concat('\n'));
+          break;
+        case 'redLane':
+          process.stdout.write(chalk.red(avLane).concat('\n'));
+          break;
+        default:
+          break;
+      }
+    });
+  }
+  // Choices for maturity model
+  if (options.maturityModels) {
+    process.stdout.write("Available Maturity Models: ".concat('\n'))
+    availableModels.forEach((avModel, idx) => {
+      process.stdout.write(chalk.green(idx).concat(" ", avModel, "\n"));
+    })
+  }
+});
+
+// Inspect code and gather intelligence
+program
+.command('inspect')
+.description('inspect source-code to security intelligence & security weaknesses')
+.requiredOption('-f, --file <file>', 'examine AppInspector from JSON file')
+.requiredOption('-p, --project <project>', 'set a project name')
+.option('--sarif <sarif>', 'Examine SARIF for intel')
+.action((options) => {
+  let fileContent;
+  const sarif = options.sarif;
+  const project = options.project;
+  let checkSarif = false;
+  if (fileExists(sarif)) {
+    checkSarif = true;
+  }
+  if (fileExists(options.file)) {
+    fileContent = require(options.file);
+    inspect(project, fileContent, checkSarif, sarif);
+  } else {
+    process.stderr.write("No suitable code-intel was passed.\n");
   }
 });
 

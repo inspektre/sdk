@@ -2,7 +2,6 @@ const { generateMeta } = require('./generateMeta');
 const { generateDate } = require('../util');
 const {
     setProjectCodeIntel,
-    alterProjectThreatLevel,
     alterProjectUpdated,
     createProject,
     createScans,
@@ -19,15 +18,13 @@ const {
 const { projectExists } = require('../queries');
 const { consumeDCAISarif } = require('../sarif');
 
-const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
+const inspect =  async (project, data, checkSarif, sarif) => {
     // Step #1: Generate Metadata and a Project
     const meta = generateMeta(project, data);
-    // Create or Update a project by name with ThreatLevel
     const existingProject = await projectExists(meta.projectName);
     let projectId = null;
-    if(existingProject && threatLevel) {
+    if(existingProject) {
         projectId = existingProject.projectId;
-        await alterProjectThreatLevel(existingProject.name, existingProject.projectId, threatLevel);
         // Update Time of change for existing proj.
         // To-Do: Combine these two mutations into one
         /* 
@@ -37,7 +34,7 @@ const inspect =  async (project, data, threatLevel, checkSarif, sarif) => {
     }
     else {
         process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
-        projectId = await createProject(meta.projectName, threatLevel, meta.dateScanned);
+        projectId = await createProject(meta.projectName, meta.dateScanned);
     }
     
     // /* Step #2: Record Scan Results */

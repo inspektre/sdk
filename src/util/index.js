@@ -1,11 +1,12 @@
 const fs = require('fs');
 const homedir = require('os').homedir();
 const path = require('path');
-// const figures = require('figures');
+const figures = require('figures');
+const chalk = require('chalk');
 const { ApolloClient, InMemoryCache, HttpLink, ApolloLink } = require('@apollo/client/core');
 const fetch = require('node-fetch');
 const dotenv = require('dotenv');
-const { handleErrors } = require('./errors');
+const { handleErrors, handleRequiredInputs } = require('./errors');
 const packageJson = require('../../package.json');
 
 dotenv.config({ path: path.join(homedir, '/.config/inspektre/.env') });
@@ -77,6 +78,96 @@ const fileExists = (file) => {
     }
 };
 
-// File Contents
+const requirementsAvailable = [
+    {
+        id: 1,
+        chapter: "Architecture, Design and Threat Modeling Requirements"
+    },
+    {
+        id: 2,
+        chapter: "Authentication Verification Requirements"
+    },
+    {
+        id: 3,
+        chapter: "Session Management Verification Requirements"
+    },
+    {
+        id: 4,
+        chapter: "Access Control Verification Requirements"
+    },
+    {
+        id: 5,
+        chapter: "Validation, Sanitization and Encoding Verification Requirements"
+    },
+    {
+        id: 6,
+        chapter: "Stored Cryptography Verification Requirements"
+    },
+    {
+        id: 7,
+        chapter: "Error Handling and Logging Verification Requirements"
+    },
+    {
+        id: 8,
+        chapter: "Data Protection Verification Requirements"
+    },
+    {
+        id: 9,
+        chapter:"Communications Verification Requirements"
+    },
+    {
+        id: 10,
+        chapter: "Malicious Code Verification Requirements"
+    },
+    {
+        id: 11,
+        chapter: "Business Logic Verification Requirements"
+    },
+    {
+        id: 12,
+        chapter: "File and Resources Verification Requirements"
+    },
+    {
+        id: 13,
+        chapter: "API and Web Service Verification Requirements"
+    },
+    {
+        id: 14,
+        chapter: "Configuration Verification Requirements"
+    },
+];
 
-module.exports = { client, initConfig, handleErrors, fileExists, generateDate };
+const availableLanes = [
+    'greenLane',
+    'yellowLane',
+    'redLane'
+];
+
+const availableModels = ['BSIMM', 'OpenSAMM'];
+
+const commaSeparatedRequirementsList = (values) => {
+    return [...new Set(values.split(',').map((val) => {
+        const num = isNaN(parseInt(val))? 0: parseInt(val);
+        return requirementsAvailable.find((req) => {
+            if(req.id === num) {
+                return req;
+            }
+        })
+    }))].map((selection) => selection.chapter);
+};
+
+const checkFloatRange = (range) => {
+    const num  = isNaN(parseFloat(range))? 0: parseFloat(range)
+    if (num <= 1.0 && num >= 0.0 ) {
+        return num
+    } else {
+        return 0
+    }
+};
+
+const modelSelection = (model) => {
+    return availableModels.indexOf(model) > -1 ? model: false
+}
+
+
+module.exports = { client, initConfig, handleErrors, handleRequiredInputs, fileExists, generateDate, commaSeparatedRequirementsList, requirementsAvailable, availableLanes, checkFloatRange, availableModels, modelSelection};
