@@ -2,7 +2,6 @@ const fs = require('fs');
 const homedir = require('os').homedir();
 const path = require('path');
 const figures = require('figures');
-const chalk = require('chalk');
 const { ApolloClient, InMemoryCache, HttpLink, ApolloLink } = require('@apollo/client/core');
 const fetch = require('node-fetch');
 const dotenv = require('dotenv');
@@ -157,7 +156,7 @@ const commaSeparatedRequirementsList = (values) => {
 };
 
 const checkFloatRange = (range) => {
-    const num  = isNaN(parseFloat(range))? 0: parseFloat(range)
+    const num  = isNaN(parseFloat(range))? 0: parseFloat(range);
     if (num <= 1.0 && num >= 0.0 ) {
         return num
     } else {
@@ -166,7 +165,7 @@ const checkFloatRange = (range) => {
 };
 
 const modelSelection = (model) => {
-    return availableModels.indexOf(model) > -1 ? model: false
+    return availableModels.indexOf(model) > -1 ? model: false;
 }
 
 
