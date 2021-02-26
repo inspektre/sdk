@@ -17,6 +17,8 @@ const {
 } = require('../mutations');
 const { projectExists } = require('../queries');
 const { consumeDCAISarif } = require('../sarif');
+const chalk = require('chalk');
+const figures = require('figures');
 
 const inspect =  async (project, data, checkSarif, sarif) => {
     // Step #1: Generate Metadata and a Project
@@ -31,42 +33,46 @@ const inspect =  async (project, data, checkSarif, sarif) => {
             Temporary patch for ISO String - GQL or APOC Bug
         */
         await alterProjectUpdated(meta.projectName, existingProject.projectId, generateDate(new Date().toISOString()));
-    }
-    else {
-        process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
-        projectId = await createProject(meta.projectName, meta.dateScanned);
-    }
+   
     
-    // /* Step #2: Record Scan Results */
-    const codeIntelEntry = await setProjectCodeIntel(meta);
-    await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
-    const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
+        // /* Step #2: Record Scan Results */
+        const codeIntelEntry = await setProjectCodeIntel(meta);
+        await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
+        const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
 
-    // /* Step #3: Security Graphs */
-    if(scanRecords) {
-        const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
-        if(prjktScanMeta) {
-            console.log('Project Scans Meta is set.');
+        // /* Step #3: Security Graphs */
+        if(scanRecords) {
+            const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
+            if(prjktScanMeta) {
+                console.log('Project Scans Meta is set.');
+            }
+            
+        const codeIntlScanMeta = await Promise.all(scanRecords.map(scanId => setCodeIntelScansMeta(codeIntelEntry, meta.projectName, meta.version, scanId)));
+        if(codeIntlScanMeta) {
+            console.log('CodeIntel Scans Meta is set.');
+        }
+        }
+        if(checkSarif) {
+            const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
+            await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
+            await setSarifAttacksMeta(meta.projectName, sarifEntry);
         }
         
-       const codeIntlScanMeta = await Promise.all(scanRecords.map(scanId => setCodeIntelScansMeta(codeIntelEntry, meta.projectName, meta.version, scanId)));
-       if(codeIntlScanMeta) {
-           console.log('CodeIntel Scans Meta is set.');
-       }
+        await setVerificationsMeta(meta.projectName);
+        await setWeaknessMeta(meta.projectName);
+        await setAttacksMeta(meta.projectName);
+        await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
+        // // SARIF - Projects - Attacks Meta
+        // process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
     }
-    if(checkSarif) {
-        const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
-        await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
-        await setSarifAttacksMeta(meta.projectName, sarifEntry);
+    else {
+        process.stderr.write(chalk.red(figures.main.cross).concat(`${meta.projectName} does not exist.!\n`));
+        setTimeout(() => {
+            process.exit(-1);
+        }, 1500);
     }
     
-    await setVerificationsMeta(meta.projectName);
-    await setWeaknessMeta(meta.projectName);
-    await setAttacksMeta(meta.projectName);
-    await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
     
-    // // SARIF - Projects - Attacks Meta
-    // process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
 };
 
 module.exports = {
