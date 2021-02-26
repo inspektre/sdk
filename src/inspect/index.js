@@ -1,72 +1,59 @@
+const chalk = require('chalk');
+const figures = require('figures');
 const { generateMeta } = require('./generateMeta');
-const { generateDate } = require('../util');
-const {
-    setProjectCodeIntel,
-    alterProjectUpdated,
-    createProject,
-    createScans,
-    setVerificationsMeta,
-    setAttacksMeta,
-    setWeaknessMeta,
-    setScansMeta,
-    setProjectCodeIntelMeta,
-    setSarifProjectMeta,
-    setSarifAttacksMeta,
-    setCodeIntelScansMeta,
-    setCodeIntelAttacksMeta
-} = require('../mutations');
 const { projectExists } = require('../queries');
-const { consumeDCAISarif } = require('../sarif');
+const { createProject } = require('../mutations');
+const { postProcessing } = require('./postProcessing');
+const { handleErrors } = require('../util');
+
+
 
 const inspect =  async (project, data, checkSarif, sarif) => {
-    // Step #1: Generate Metadata and a Project
+    // Generate Metadata and add to existing project
     const meta = generateMeta(project, data);
     const existingProject = await projectExists(meta.projectName);
-    let projectId = null;
-    if(existingProject) {
-        projectId = existingProject.projectId;
-        // Update Time of change for existing proj.
-        // To-Do: Combine these two mutations into one
-        /* 
-            Temporary patch for ISO String - GQL or APOC Bug
-        */
-        await alterProjectUpdated(meta.projectName, existingProject.projectId, generateDate(new Date().toISOString()));
+    let currentProjectId = null;
+    if(existingProject && existingProject.projectId) {
+        currentProjectId = existingProject.projectId;
+        await postProcessing(meta, currentProjectId, checkSarif, sarif);
     }
     else {
-        process.stdout.write(`${meta.projectName} does not exist. Creating a new project!\n`);
-        projectId = await createProject(meta.projectName, meta.dateScanned);
-    }
-    
-    // /* Step #2: Record Scan Results */
-    const codeIntelEntry = await setProjectCodeIntel(meta);
-    await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
-    const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
-
-    // /* Step #3: Security Graphs */
-    if(scanRecords) {
-        const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
-        if(prjktScanMeta) {
-            console.log('Project Scans Meta is set.');
-        }
+        process.stderr.write(chalk.red(figures.main.cross).concat(`${meta.projectName} does not exist. Creating a new project with defaults!\n`));
         
-       const codeIntlScanMeta = await Promise.all(scanRecords.map(scanId => setCodeIntelScansMeta(codeIntelEntry, meta.projectName, meta.version, scanId)));
-       if(codeIntlScanMeta) {
-           console.log('CodeIntel Scans Meta is set.');
-       }
+        const name = meta.projectName;
+        // Risk Thresholds
+        const likelihood =0.6, severity  = 0.6, skill=0.4;
+        // Defaulting to OpenSAMM as the first maturity model.
+        const maturityModel = 'OpenSAMM';
+        const createdAt = {formatted: new Date().toISOString() }
+
+        createProject(
+            name,
+            type = "web",
+            requirements=["Architecture, Design and Threat Modeling Requirements"],
+            lane="greenLane",
+            likelihood,
+            severity,
+            skill,
+            maturityModel,
+            createdAt,
+        )
+        .then((projectId)=> {
+            currentProjectId = projectId;
+            postProcessing(meta, currentProjectId, checkSarif, sarif)
+            .then(
+                process.stdout.write(chalk.green(figures.main.tick).concat(" new Project is now ready."))
+            )
+            .catch(err => {
+                handleErrors(err);
+            })
+        })
+        .catch(err => {
+            process.stderr.write(chalk.red(figures.main.cross).concat("An error in creating project. Please ensure unique name OR roles & permissions to proceed.\n"));
+            handleErrors(err);
+        })
+        
     }
-    if(checkSarif) {
-        const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
-        await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
-        await setSarifAttacksMeta(meta.projectName, sarifEntry);
-    }
-    
-    await setVerificationsMeta(meta.projectName);
-    await setWeaknessMeta(meta.projectName);
-    await setAttacksMeta(meta.projectName);
-    await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
-    
-    // // SARIF - Projects - Attacks Meta
-    // process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
 };
 
 module.exports = {
