@@ -1,6 +1,6 @@
 {
   "name": "@inspektre/inspektre",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "inspektre cli & SDK package",
   "main": "src/cli.js",
   "bin": {
