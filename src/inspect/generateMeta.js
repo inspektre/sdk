@@ -1,3 +1,5 @@
+const chalk = require('chalk');
+const figures = require('figures');
 const { processRepoResults, processTagCounters } = require('./processResults');
 
 

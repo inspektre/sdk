@@ -1,5 +1,3 @@
-const chalk = require('chalk');
-const figures = require('figures');
 const { generateDate } = require('../util');
 const {
   setProjectCodeIntel,
@@ -19,13 +17,13 @@ const {
 const { consumeDCAISarif } = require('../sarif');
 
 
-const postProcessing = async (meta, projectId, checkSarif, sarif) => {
+const postProcessing = async (meta, currentProjectId, checkSarif, sarif) => {
           // Update Time of change for existing proj.
         // To-Do: Combine these two mutations into one
         /* 
             Temporary patch for ISO String - GQL or APOC Bug
         */
-       await alterProjectUpdated(meta.projectName, projectId, generateDate(new Date().toISOString()));
+       await alterProjectUpdated(meta.projectName, currentProjectId, generateDate(new Date().toISOString()));
    
     
        // /* Step #2: Record Scan Results */
