@@ -9,7 +9,7 @@ const figures = require('figures');
 const chalk = require('chalk');
 const packageJson = require('../package.json');
 const { Auth, Refresh } = require('./auth');
-const { initConfig, fileExists, handleRequiredInputs, commaSeparatedRequirementsList } = require('./util');
+const { initConfig, fileExists, commaSeparatedRequirementsList, projectLaneSelection, requirementsAvailable, availableLanes } = require('./util');
 const {
   getProjects,
   getProject,
@@ -123,21 +123,61 @@ program
 .requiredOption('--projectName <projectName>', 'Set name for a new project')
 .requiredOption('--choice <choice>', 'Select a project choice')
 .requiredOption('--requirements <requirements>', 'select requirements that are relevant', commaSeparatedRequirementsList)
+.requiredOption('--lane <lane>', 'Select a project lane', projectLaneSelection)
 .option('-v, --verbose', 'output extra information into the CLI')
 .action((options) => {
   // Get a project name
   const projectName = options.projectName;
   // Get a choice and match - Static list
   const projectOptions = ['web', 'api', 'cli', 'back-end' ,'scripts', 'etl', 'infrastructure', 'firmware', 'hardware'];
-  const choice = projectOptions.indexOf(options.choice) <= -1 ? options.choice: null;
+  const choice = projectOptions.indexOf(options.choice) > -1 ? options.choice: null;
+  const lane = availableLanes.find((avLane) => {
+    if(avLane == options.lane) {
+      return avLane;
+    }
+  });
   // Check if choice is valid
-  if (choice) {
-    process.stderr.write(chalk.red(figures.main.cross).concat(' Please make a project choice.\nAvailable Choices: '.concat(chalk.green(projectOptions.toString(), '\n'))));
+  if (projectName === undefined || projectName === null || choice === null || lane === undefined) {
+    process.stderr.write(chalk.red(figures.main.cross).concat(' Please ensure that the correct choices are used '.concat('\n')));
+    setTimeout(() => {
+      process.exit(-1);
+    }, 1000);
+  } else {
+    const requirements = options.requirements;
+    console.log(projectName, choice, requirements, lane);
   }
-  const requirements = options.requirements;
-  console.log(requirements);
 });
 
+program
+.command('list')
+.description('Selection of options for project')
+.option('--choices', 'use this option to list available choices for project')
+.option('--lanes', 'use this option to list available project lanes')
+.action((options) => {
+  if(options.choices) {
+    requirementsAvailable.forEach(req => {
+      process.stdout.write(chalk.green(req.id).concat(' ', req.chapter, '\n'));
+    })
+  }
+  if(options.lanes) {
+    process.stdout.write("Available lanes: ".concat('\n'))
+    availableLanes.forEach(avLane => {
+      switch(avLane) {
+        case 'greenLane':
+          process.stdout.write(chalk.green(avLane).concat('\n'));
+          break;
+        case 'yellowLane':
+          process.stdout.write(chalk.yellowBright(avLane).concat('\n'));
+          break;
+        case 'redLane':
+          process.stdout.write(chalk.red(avLane).concat('\n'));
+          break;
+        default:
+          break;
+      }
+    });
+  }
+});
 
 if(process.argv.length > 2) {
   program.parse(process.argv);

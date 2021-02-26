@@ -137,11 +137,22 @@ const requirementsAvailable = [
     },
 ];
 
+const availableLanes = [
+    'greenLane',
+    'yellowLane',
+    'redLane'
+];
+
 const commaSeparatedRequirementsList = (values) => {
     return [...new Set(values.split(',').map((val) => {
         const num = isNaN(parseInt(val))? 0: parseInt(val);
-        return requirementsAvailable.find((req) => req.id === num)
-    }))];
+        return requirementsAvailable.find((req) => {
+            if(req.id === num) {
+                return req;
+            }
+        })
+    }))].map((selection) => selection.chapter);
 }
 
-module.exports = { client, initConfig, handleErrors, handleRequiredInputs, fileExists, generateDate, commaSeparatedRequirementsList };
+
+module.exports = { client, initConfig, handleErrors, handleRequiredInputs, fileExists, generateDate, commaSeparatedRequirementsList, requirementsAvailable, availableLanes };
