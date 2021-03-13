@@ -2,7 +2,6 @@ const figures = require('figures');
 const chalk = require('chalk');
 
 const handleErrors = (error) => {
-    console.dir(error.networkError.result.errors)
     if(error.ApolloError) {
         process.stderr.write(chalk.red(figures.main.cross).concat("Configuration error occured.\n"));
         process.exit(-1)
