@@ -15,7 +15,7 @@ const inspect =  async (project, data, checkSarif, sarif) => {
     let currentProjectId = null;
     if(existingProject && existingProject.projectId) {
         currentProjectId = existingProject.projectId;
-        await postProcessing(meta, currentProjectId, checkSarif, sarif);
+        await postProcessing(project, meta, currentProjectId, checkSarif, sarif);
     }
     else {
         process.stderr.write(chalk.red(figures.main.cross).concat(`${meta.projectName} does not exist. Creating a new project with defaults!\n`));
@@ -40,7 +40,7 @@ const inspect =  async (project, data, checkSarif, sarif) => {
         )
         .then((projectId)=> {
             currentProjectId = projectId;
-            postProcessing(meta, currentProjectId, checkSarif, sarif)
+            postProcessing(project, meta, currentProjectId, checkSarif, sarif)
             .then(
                 process.stdout.write(chalk.green(figures.main.tick).concat(" new Project is now ready."))
             )

@@ -2,8 +2,8 @@ const gql = require('graphql-tag');
 
 const CREATE_SCANS = gql`
 mutation(
-    $projectName: String!,
-    $version: String!,
+    $projectId: String!,
+    $codeRepoId: String!,
     $dateScanned: _Neo4jDateTimeInput!,
     $ruleId: String!,
     $ruleName: String!,
@@ -14,8 +14,8 @@ mutation(
     $endLocationColumn: Int!
 ) {
     CreateScans(
-        projectName: $projectName
-        version: $version
+        projectId: $projectId
+        codeRepoId: $codeRepoId
         dateScanned: $dateScanned
         ruleId: $ruleId
         ruleName: $ruleName

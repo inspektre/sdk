@@ -207,12 +207,12 @@ program
 .command('inspect')
 .description('inspect source-code to security intelligence & security weaknesses')
 .requiredOption('-f, --file <file>', 'examine AppInspector from JSON file')
-.requiredOption('-p, --project <project>', 'set a project name')
+.option('-p, --project <project>', 'set a project name')
 .option('--sarif <sarif>', 'Examine SARIF for intel')
 .action((options) => {
   let fileContent;
   const sarif = options.sarif;
-  const project = options.project;
+  const project = options.project || '@inspektre/orphaned'
   let checkSarif = false;
   if (fileExists(sarif)) {
     checkSarif = true;

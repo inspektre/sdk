@@ -15,8 +15,8 @@ const {
     setCodeIntelScansMeta,
     setCodeIntelAttacksMeta
 } = require('./projectMeta');
-const { setProjectCodeIntel } = require('./codeIntel');
-const { createScans } = require('./scans')
+const { setProjectCodeRepo, setProjectRepoRelationShip } = require('./codeRepo');
+const { createScans, setScansRelationShip } = require('./scans')
 const { createSarif } = require('./sarif');
 
 
@@ -25,8 +25,10 @@ module.exports = {
     createProject,
     alterProjectUpdated,
     alterProjectTags,
-    setProjectCodeIntel,
+    setProjectCodeRepo,
+    setProjectRepoRelationShip,
     createScans,
+    setScansRelationShip,
     createSarif,
     setVerificationsMeta,
     setAttacksMeta,
