@@ -1,10 +1,10 @@
 const chalk = require('chalk');
 const figures = require('figures');
 const { generateMeta } = require('./generateMeta');
-const { projectExists } = require('../queries');
-const { createProject } = require('../mutations');
+const { projectExists, queryChapterIds, queryOrgId } = require('../queries');
+const { createProject, setVerifications } = require('../mutations');
 const { postProcessing } = require('./postProcessing');
-const { handleErrors } = require('../util');
+const { handleErrors, generateDate } = require('../util');
 
 
 
@@ -26,7 +26,8 @@ const inspect =  async (project, data, checkSarif, sarif, toolName) => {
         // Defaulting to OpenSAMM as the first maturity model.
         const maturityModel = 'OpenSAMM';
         const createdAt = {formatted: new Date().toISOString() }
-        createProject(
+        // const requirements = ["Architecture, Design and Threat Modeling Requirements"];
+        currentProjectId = await createProject(
             name,
             type = "web",
             requirements=["Architecture, Design and Threat Modeling Requirements"],
@@ -37,20 +38,23 @@ const inspect =  async (project, data, checkSarif, sarif, toolName) => {
             maturityModel,
             createdAt,
         )
-        .then((projectId)=> {
-            currentProjectId = projectId;
-            postProcessing(project, meta, currentProjectId, checkSarif, sarif, toolName)
-            .then(
-                process.stdout.write(chalk.green(figures.main.tick).concat(" new Project is now ready."))
-            )
-            .catch(err => {
-                handleErrors(err);
-            })
-        })
         .catch(err => {
             process.stderr.write(chalk.red(figures.main.cross).concat("An error in creating project. Please ensure unique name OR roles & permissions to proceed.\n"));
             handleErrors(err);
+        });
+
+        const AsvsIds = await queryChapterIds(["Architecture, Design and Threat Modeling Requirements"]);
+        
+        // Post-Processing
+        const codeRepoId = await postProcessing(project, meta, currentProjectId, checkSarif, sarif, toolName)
+        .catch(err => {
+            handleErrors(err);
         })
+        const orgId = await queryOrgId().catch(err => handleErrors(err));
+        if(AsvsIds) {
+            const createdAt = generateDate(new Date().toISOString())
+            await Promise.all(AsvsIds.map(AsvsId => setVerifications(orgId, AsvsId, codeRepoId, currentProjectId, createdAt)));
+        }
         
     }
 };

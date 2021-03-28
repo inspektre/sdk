@@ -32,14 +32,14 @@ const postProcessing = async (project, meta, currentProjectId, checkTool, toolRe
   await alterProjectUpdated(project, currentProjectId, generateDate(new Date().toISOString()));
   // Create a new entry for repo as a new scan
   const codeRepoId = await setProjectCodeRepo(meta, currentProjectId);
-  // Security Graphs
+  // Security Graphs - Project & Repo directed relation
   await setProjectRepoRelationShip(currentProjectId, codeRepoId);
   
-  // Capture Scan details
+  // Security Graphs Capture Scan details
   const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result, currentProjectId, codeRepoId)));
 
   let scansRealtionshipMeta;
-  // Security Graphs
+  // Security Graphs - Scan Repo Project Nodes directed realtion
   if(scanRecords) {
       scansRealtionshipMeta = await Promise.all(scanRecords.map(scanId => setScansRelationShip(scanId, currentProjectId, codeRepoId)));
   }
@@ -56,6 +56,7 @@ const postProcessing = async (project, meta, currentProjectId, checkTool, toolRe
   //  await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
   // SARIF - Projects - Attacks Meta
   // process.stdout.write('Security Graphs generated. All tasks are complete.\n');
+  return codeRepoId;
 }
 
 module.exports = {
