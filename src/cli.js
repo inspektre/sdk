@@ -207,19 +207,21 @@ program
 .command('inspect')
 .description('inspect source-code to security intelligence & security weaknesses')
 .requiredOption('-f, --file <file>', 'examine AppInspector from JSON file')
+.option('-t, --toolName <toolName>', 'Name of the tool from which results were generated')
 .option('-p, --project <project>', 'set a project name')
 .option('--sarif <sarif>', 'Examine SARIF for intel')
 .action((options) => {
   let fileContent;
   const sarif = options.sarif;
-  const project = options.project || '@inspektre/orphaned'
+  const project = options.project || '@inspektre/orphaned';
+  const toolName = options.toolName || 'Unspecified';
   let checkSarif = false;
   if (fileExists(sarif)) {
     checkSarif = true;
   }
   if (fileExists(options.file)) {
     fileContent = require(options.file);
-    inspect(project, fileContent, checkSarif, sarif);
+    inspect(project, fileContent, checkSarif, sarif, toolName);
   } else {
     process.stderr.write("No suitable code-intel was passed.\n");
   }

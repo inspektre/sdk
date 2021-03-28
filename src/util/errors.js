@@ -7,7 +7,7 @@ const handleErrors = (error) => {
         process.exit(-1)
     }
     if(error.graphQLErrors) {
-        process.stderr.write(chalk.red(figures.main.cross).concat("Error occured in data formatting OR duplicate could not be created\n"));
+        process.stderr.write(chalk.red(figures.main.cross).concat("Error occured. Try inspektre reauthorize.\n"));
         process.exit(-1);
     }
     if (error.networkError) {

@@ -8,25 +8,24 @@ const { handleErrors } = require('../util');
 
 
 
-const inspect =  async (project, data, checkSarif, sarif) => {
+const inspect =  async (project, data, checkSarif, sarif, toolName) => {
     // Generate Metadata and add to existing project
     const meta = generateMeta(project, data);
-    const existingProject = await projectExists(meta.projectName);
+    const existingProject = await projectExists(project);
     let currentProjectId = null;
     if(existingProject && existingProject.projectId) {
         currentProjectId = existingProject.projectId;
-        await postProcessing(project, meta, currentProjectId, checkSarif, sarif);
+        await postProcessing(project, meta, currentProjectId, checkSarif, sarif, toolName);
     }
     else {
         process.stderr.write(chalk.red(figures.main.cross).concat(`${meta.projectName} does not exist. Creating a new project with defaults!\n`));
         
         const name = meta.projectName;
         // Risk Thresholds
-        const likelihood =0.6, severity  = 0.6, skill=0.4;
+        const likelihood = 0.6, severity  = 0.6, skill=0.4;
         // Defaulting to OpenSAMM as the first maturity model.
         const maturityModel = 'OpenSAMM';
         const createdAt = {formatted: new Date().toISOString() }
-
         createProject(
             name,
             type = "web",
@@ -40,7 +39,7 @@ const inspect =  async (project, data, checkSarif, sarif) => {
         )
         .then((projectId)=> {
             currentProjectId = projectId;
-            postProcessing(project, meta, currentProjectId, checkSarif, sarif)
+            postProcessing(project, meta, currentProjectId, checkSarif, sarif, toolName)
             .then(
                 process.stdout.write(chalk.green(figures.main.tick).concat(" new Project is now ready."))
             )

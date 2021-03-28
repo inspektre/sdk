@@ -65,8 +65,8 @@ query {
 }
 `
 const QUERY_PROJECT_EXISTS = gql`
-query($project: String!) {
-  Project(filter: {name: $project}) {
+query($name: String!) {
+  Project(filter: {name: $name}) {
     name
     projectId
   }

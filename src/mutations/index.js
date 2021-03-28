@@ -17,7 +17,7 @@ const {
 } = require('./projectMeta');
 const { setProjectCodeRepo, setProjectRepoRelationShip } = require('./codeRepo');
 const { createScans, setScansRelationShip } = require('./scans')
-const { createSarif } = require('./sarif');
+const { CreateToolResults } = require('./toolResults');
 
 
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
     setProjectRepoRelationShip,
     createScans,
     setScansRelationShip,
-    createSarif,
+    CreateToolResults,
     setVerificationsMeta,
     setAttacksMeta,
     setWeaknessMeta,

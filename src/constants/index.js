@@ -34,7 +34,7 @@ const {
 } = require('./codeRepoQL');
 const { QUERY_WEAKNESS_BY_OWASP } = require('./weaknessQL');
 const { CREATE_SCANS } = require('./scansQL');
-const { CREATE_SARIF } = require('./sarifQL');
+const { CREATE_TOOL_RESULTS } = require('./toolResults');
 
 const { ASSIGN_REPO_TO_PROJECT, ASSIGN_SCANS_TO_REPO_AND_PROJECT } = require('./relationsQL');
 
@@ -69,7 +69,7 @@ module.exports = {
     QUERY_CODE_REPO_BY_PROJECT,
     CREATE_CODE_REPO,
     CREATE_SCANS,
-    CREATE_SARIF,
+    CREATE_TOOL_RESULTS,
     ASSIGN_REPO_TO_PROJECT,
     ASSIGN_SCANS_TO_REPO_AND_PROJECT
 };

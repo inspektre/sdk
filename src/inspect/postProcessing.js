@@ -4,7 +4,9 @@ const {
   setProjectRepoRelationShip,
   alterProjectUpdated,
   createScans,
-  setScansRelationShip,
+  setScansRelationShip
+} = require('../mutations');
+/*
   setVerificationsMeta,
   setAttacksMeta,
   setWeaknessMeta,
@@ -13,12 +15,12 @@ const {
   setSarifProjectMeta,
   setSarifAttacksMeta,
   setCodeIntelScansMeta,
-  setCodeIntelAttacksMeta
-} = require('../mutations');
-const { consumeSarif } = require('../sarif');
+  setCodeIntelAttacksMeta from mutations;
+*/
+const { consumeToolResults } = require('../consumeToolResults');
 
 
-const postProcessing = async (project, meta, currentProjectId, checkSarif, sarif) => {
+const postProcessing = async (project, meta, currentProjectId, checkTool, toolResult, toolName) => {
   /*
   // Update Time of change for existing proj.
   // To-Do: Combine these two mutations into one
@@ -31,7 +33,7 @@ const postProcessing = async (project, meta, currentProjectId, checkSarif, sarif
   // Create a new entry for repo as a new scan
   const codeRepoId = await setProjectCodeRepo(meta, currentProjectId);
   // Security Graphs
-  const repoProjectRelation = await setProjectRepoRelationShip(currentProjectId, codeRepoId);
+  await setProjectRepoRelationShip(currentProjectId, codeRepoId);
   
   // Capture Scan details
   const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result, currentProjectId, codeRepoId)));
@@ -42,18 +44,18 @@ const postProcessing = async (project, meta, currentProjectId, checkSarif, sarif
       scansRealtionshipMeta = await Promise.all(scanRecords.map(scanId => setScansRelationShip(scanId, currentProjectId, codeRepoId)));
   }
         
-  // if(checkSarif) {
-  //     const sarifEntry = await consumeSarif(sarif, meta.projectName, meta.version);
-  //     await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
-  //     await setSarifAttacksMeta(meta.projectName, sarifEntry);
-  // }
-  
+  if(checkTool) {
+    await consumeToolResults(toolResult, currentProjectId, codeRepoId, toolName);
+  }
+
+  // await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
+  // await setSarifAttacksMeta(meta.projectName, sarifEntry);
   //  await setVerificationsMeta(meta.projectName);
   //  await setWeaknessMeta(meta.projectName);
   //  await setAttacksMeta(meta.projectName);
   //  await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
-    // SARIF - Projects - Attacks Meta
-    process.stdout.write('Security Graphs generated. All tasks are complete.\n');
+  // SARIF - Projects - Attacks Meta
+  // process.stdout.write('Security Graphs generated. All tasks are complete.\n');
 }
 
 module.exports = {

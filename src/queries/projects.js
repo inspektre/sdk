@@ -2,9 +2,10 @@ const { QUERY_PROJECTS, QUERY_PROJECT, QUERY_PROJECT_EXISTS } = require('../cons
 const { client, handleErrors  } = require('../util');
 
 const projectExists = async (project) => {
+  const name = project;
   const result = await client.query({
     query: QUERY_PROJECT_EXISTS,
-    variables: { project }
+    variables: { name }
   })
   .catch(error => {
     handleErrors(error);
@@ -12,7 +13,7 @@ const projectExists = async (project) => {
   if(result && result.data && result.data.Project.length > 0) {
     return result.data.Project[0];
   }
-  return;
+  return null;
 };
 
 const getProjects = async () => {
