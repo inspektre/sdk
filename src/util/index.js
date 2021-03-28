@@ -167,7 +167,7 @@ const checkFloatRange = (range) => {
 
 const modelSelection = (model) => {
     return availableModels.indexOf(model) > -1 ? model: false;
-}
+};
 
 
 module.exports = { client, initConfig, handleErrors, handleRequiredInputs, fileExists, generateDate, commaSeparatedRequirementsList, requirementsAvailable, availableLanes, checkFloatRange, availableModels, modelSelection};

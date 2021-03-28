@@ -10,7 +10,7 @@ const supportedDCAIList = [
 ];
 
 // deepcode.ai SARIF Results
-const consumeDCAISarif = async (sarifFile, projectName, version) => {
+const consumeSarif = async (sarifFile, projectName, version) => {
     const dcaiMeta = {};
     dcaiMeta.tags = [];
     dcaiMeta.projectName = projectName;
@@ -40,5 +40,5 @@ const consumeDCAISarif = async (sarifFile, projectName, version) => {
 };
 
 module.exports = {
-    consumeDCAISarif
+    consumeSarif
 };
