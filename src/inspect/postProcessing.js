@@ -49,8 +49,7 @@ const postProcessing = async (project, meta, currentProjectId, checkTool, toolRe
     await consumeToolResults(toolResult, currentProjectId, codeRepoId, toolName);
   }
 
-  const x = await callSetAttackGraph(currentProjectId, codeRepoId);
-  console.log(x);
+  await callSetAttackGraph(currentProjectId, codeRepoId);
   process.stdout.write('Security Graphs generated. All tasks are complete.\n');
   return codeRepoId;
 }

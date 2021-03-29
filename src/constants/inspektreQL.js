@@ -1,8 +1,8 @@
 const gql = require('graphql-tag');
 
 const SET_ATTACK_GRAPH = gql`
-mutation($projectId: ID!, $codeRepoId: ID! ) {
-  setGraphAttacks(projectId: $projectId, codeRepoId: $codeRepoId)
+mutation($codeRepoId: String!, $projectId: String!) {
+  setGraphAttacks(codeRepoId: $codeRepoId, projectId: $projectId)
 }
 `;
 
