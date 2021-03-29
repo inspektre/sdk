@@ -4,7 +4,8 @@ const {
   setProjectRepoRelationShip,
   alterProjectUpdated,
   createScans,
-  setScansRelationShip
+  setScansRelationShip,
+  callSetAttackGraph
 } = require('../mutations');
 /*
   setVerificationsMeta,
@@ -48,14 +49,9 @@ const postProcessing = async (project, meta, currentProjectId, checkTool, toolRe
     await consumeToolResults(toolResult, currentProjectId, codeRepoId, toolName);
   }
 
-  // await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
-  // await setSarifAttacksMeta(meta.projectName, sarifEntry);
-  //  await setVerificationsMeta(meta.projectName);
-  //  await setWeaknessMeta(meta.projectName);
-  //  await setAttacksMeta(meta.projectName);
-  //  await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
-  // SARIF - Projects - Attacks Meta
-  // process.stdout.write('Security Graphs generated. All tasks are complete.\n');
+  const x = await callSetAttackGraph(currentProjectId, codeRepoId);
+  console.log(x);
+  process.stdout.write('Security Graphs generated. All tasks are complete.\n');
   return codeRepoId;
 }
 

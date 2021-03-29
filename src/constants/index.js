@@ -29,6 +29,7 @@ const { CREATE_TOOL_RESULTS } = require('./toolResults');
 const { ASSIGN_REPO_TO_PROJECT, ASSIGN_SCANS_TO_REPO_AND_PROJECT } = require('./projectRelationsQL');
 const { QUERY_CHAPTER_IDS, MUTATE_ORG_PROJECT_CODE_REPO_VERIFICATIONS } = require('./verifications');
 const { QUERY_ORG } = require('./orgQL')
+const { SET_ATTACK_GRAPH } = require('./inspektreQL');
 
 module.exports = {
     ALTER_PROJECT_THREAT_LEVEL,
@@ -57,5 +58,6 @@ module.exports = {
     ASSIGN_SCANS_TO_REPO_AND_PROJECT,
     QUERY_CHAPTER_IDS,
     MUTATE_ORG_PROJECT_CODE_REPO_VERIFICATIONS,
-    QUERY_ORG
+    QUERY_ORG,
+    SET_ATTACK_GRAPH
 };

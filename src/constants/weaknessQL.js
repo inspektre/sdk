@@ -15,4 +15,6 @@ query($tags: [String!]!) {
 `
 
 
-module.exports = { QUERY_WEAKNESS_BY_OWASP };
+module.exports = {
+  QUERY_WEAKNESS_BY_OWASP 
+};

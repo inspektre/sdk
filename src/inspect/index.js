@@ -13,6 +13,8 @@ const inspect =  async (project, data, checkSarif, sarif, toolName) => {
     const meta = generateMeta(project, data);
     const existingProject = await projectExists(project);
     let currentProjectId = null;
+    // Get the Org ID
+    const orgId = await queryOrgId().catch(err => handleErrors(err));
     if(existingProject && existingProject.projectId) {
         currentProjectId = existingProject.projectId;
         await postProcessing(project, meta, currentProjectId, checkSarif, sarif, toolName);
@@ -44,13 +46,11 @@ const inspect =  async (project, data, checkSarif, sarif, toolName) => {
         });
 
         const AsvsIds = await queryChapterIds(["Architecture, Design and Threat Modeling Requirements"]);
-        
         // Post-Processing
         const codeRepoId = await postProcessing(project, meta, currentProjectId, checkSarif, sarif, toolName)
         .catch(err => {
             handleErrors(err);
         })
-        const orgId = await queryOrgId().catch(err => handleErrors(err));
         if(AsvsIds) {
             const createdAt = generateDate(new Date().toISOString())
             await Promise.all(AsvsIds.map(AsvsId => setVerifications(orgId, AsvsId, codeRepoId, currentProjectId, createdAt)));
