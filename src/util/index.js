@@ -13,6 +13,7 @@ dotenv.config({ path: path.join(homedir, '/.config/inspektre/.env') });
 
 const httpLink = new HttpLink({ uri: 'https://api.inspektre.io', fetch: fetch });
 
+
 const initConfig = (verbose) => {
     // Get Home Dir for POSIX of Windows
     const dir = path.join(homedir, '/.config/inspektre')
@@ -166,7 +167,7 @@ const checkFloatRange = (range) => {
 
 const modelSelection = (model) => {
     return availableModels.indexOf(model) > -1 ? model: false;
-}
+};
 
 
 module.exports = { client, initConfig, handleErrors, handleRequiredInputs, fileExists, generateDate, commaSeparatedRequirementsList, requirementsAvailable, availableLanes, checkFloatRange, availableModels, modelSelection};

@@ -1,9 +1,13 @@
 const { generateDate } = require('../util');
 const {
-  setProjectCodeIntel,
+  setProjectCodeRepo,
+  setProjectRepoRelationShip,
   alterProjectUpdated,
-  createProject,
   createScans,
+  setScansRelationShip,
+  callSetAttackGraph
+} = require('../mutations');
+/*
   setVerificationsMeta,
   setAttacksMeta,
   setWeaknessMeta,
@@ -12,49 +16,42 @@ const {
   setSarifProjectMeta,
   setSarifAttacksMeta,
   setCodeIntelScansMeta,
-  setCodeIntelAttacksMeta
-} = require('../mutations');
-const { consumeDCAISarif } = require('../sarif');
+  setCodeIntelAttacksMeta from mutations;
+*/
+const { consumeToolResults } = require('../consumeToolResults');
 
 
-const postProcessing = async (meta, currentProjectId, checkSarif, sarif) => {
-          // Update Time of change for existing proj.
-        // To-Do: Combine these two mutations into one
-        /* 
-            Temporary patch for ISO String - GQL or APOC Bug
-        */
-       await alterProjectUpdated(meta.projectName, currentProjectId, generateDate(new Date().toISOString()));
+const postProcessing = async (project, meta, currentProjectId, checkTool, toolResult, toolName) => {
+  /*
+  // Update Time of change for existing proj.
+  // To-Do: Combine these two mutations into one
    
-    
-       // /* Step #2: Record Scan Results */
-       const codeIntelEntry = await setProjectCodeIntel(meta);
-       await setProjectCodeIntelMeta(meta.projectName, meta.version, codeIntelEntry);
-       const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result)));
+      Temporary patch for ISO String - GQL or APOC Bug
+  */
 
-       // /* Step #3: Security Graphs */
-       if(scanRecords) {
-           const prjktScanMeta = await Promise.all(scanRecords.map(scanId => setScansMeta(meta.projectName, meta.version, scanId)));
-           if(prjktScanMeta) {
-               console.log('Project Scans Meta is set.');
-           }
-           
-       const codeIntlScanMeta = await Promise.all(scanRecords.map(scanId => setCodeIntelScansMeta(codeIntelEntry, meta.projectName, meta.version, scanId)));
-       if(codeIntlScanMeta) {
-           console.log('CodeIntel Scans Meta is set.');
-       }
-       }
-       if(checkSarif) {
-           const sarifEntry = await consumeDCAISarif(sarif, meta.projectName, meta.version);
-           await setSarifProjectMeta(sarifEntry, meta.projectName, meta.version);
-           await setSarifAttacksMeta(meta.projectName, sarifEntry);
-       }
-       
-       await setVerificationsMeta(meta.projectName);
-       await setWeaknessMeta(meta.projectName);
-       await setAttacksMeta(meta.projectName);
-       await setCodeIntelAttacksMeta(meta.projectName, codeIntelEntry);
-       // // SARIF - Projects - Attacks Meta
-       // process.stdout.write('Security Graphs are being generated. All tasks are complete.\n');
+  // Update the project time
+  await alterProjectUpdated(project, currentProjectId, generateDate(new Date().toISOString()));
+  // Create a new entry for repo as a new scan
+  const codeRepoId = await setProjectCodeRepo(meta, currentProjectId);
+  // Security Graphs - Project & Repo directed relation
+  await setProjectRepoRelationShip(currentProjectId, codeRepoId);
+  
+  // Security Graphs Capture Scan details
+  const scanRecords = await Promise.all(meta.repoResults.map(result => createScans(result, currentProjectId, codeRepoId)));
+
+  let scansRealtionshipMeta;
+  // Security Graphs - Scan Repo Project Nodes directed realtion
+  if(scanRecords) {
+      scansRealtionshipMeta = await Promise.all(scanRecords.map(scanId => setScansRelationShip(scanId, currentProjectId, codeRepoId)));
+  }
+        
+  if(checkTool) {
+    await consumeToolResults(toolResult, currentProjectId, codeRepoId, toolName);
+  }
+
+  await callSetAttackGraph(currentProjectId, codeRepoId);
+  process.stdout.write('Security Graphs generated. All tasks are complete.\n');
+  return codeRepoId;
 }
 
 module.exports = {

@@ -10,6 +10,8 @@ const {
     getAttackBySkill
 } = require('./attacks');
 const { getWeaknessesOwasp } = require('./weakness');
+const { queryChapterIds } = require('./verifications');
+const { queryOrgId } = require('./org')
 
 module.exports = { 
     getProjects,
@@ -23,5 +25,7 @@ module.exports = {
     getAttackByTagSeverity,
     getAttackByTagSeverityLikelihood,
     getAttackBySkill,
-    getWeaknessesOwasp
+    getWeaknessesOwasp,
+    queryChapterIds,
+    queryOrgId,
 };

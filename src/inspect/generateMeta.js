@@ -15,8 +15,10 @@ const supportedNameTags = [
 
 const generateMeta = (project, data) => {
     const meta = {};
-    meta.projectName = project;
-    meta.version = data.metaData.sourceVersion || '0.0.1';
+    meta.projectName = project
+
+    meta.repoName = data.metaData.applicationName;
+    meta.repoVersion = data.metaData.sourceVersion || '0.0.1';
     
     // This fails 
     meta.dateScanned = {formatted: new Date(data.metaData.dateScanned).toISOString() };

@@ -4,20 +4,12 @@ const {
     alterProjectTags,
     alterProjectUpdated
 } = require('./projects');
-const {
-    setVerificationsMeta,
-    setAttacksMeta,
-    setWeaknessMeta,
-    setScansMeta,
-    setProjectCodeIntelMeta,
-    setSarifProjectMeta,
-    setSarifAttacksMeta,
-    setCodeIntelScansMeta,
-    setCodeIntelAttacksMeta
-} = require('./projectMeta');
-const { setProjectCodeIntel } = require('./codeIntel');
-const { createScans } = require('./scans')
-const { createSarif } = require('./sarif');
+
+const { setProjectCodeRepo, setProjectRepoRelationShip } = require('./codeRepo');
+const { createScans, setScansRelationShip } = require('./scans')
+const { CreateToolResults } = require('./toolResults');
+const { setVerifications } = require('./verifications');
+const { callSetAttackGraph } = require('./inspektreGraphs');
 
 
 module.exports = {
@@ -25,16 +17,11 @@ module.exports = {
     createProject,
     alterProjectUpdated,
     alterProjectTags,
-    setProjectCodeIntel,
+    setProjectCodeRepo,
+    setProjectRepoRelationShip,
     createScans,
-    createSarif,
-    setVerificationsMeta,
-    setAttacksMeta,
-    setWeaknessMeta,
-    setScansMeta,
-    setProjectCodeIntelMeta,
-    setSarifProjectMeta,
-    setSarifAttacksMeta,
-    setCodeIntelScansMeta,
-    setCodeIntelAttacksMeta
+    setScansRelationShip,
+    CreateToolResults,
+    setVerifications,
+    callSetAttackGraph
 };
