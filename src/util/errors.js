@@ -7,6 +7,8 @@ const handleErrors = (error) => {
         process.exit(-1)
     }
     if(error.graphQLErrors) {
+        console.dir(error.graphQLErrors);
+        console.dir(error.networkError)
         process.stderr.write(chalk.red(figures.main.cross).concat("Error occured. Try inspektre reauthorize.\n"));
         process.exit(-1);
     }
