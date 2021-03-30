@@ -21,7 +21,7 @@ const generateMeta = (project, data) => {
     meta.repoVersion = data.metaData.sourceVersion || '0.0.1';
     
     // This fails 
-    meta.dateScanned = {formatted: new Date(data.metaData.dateScanned).toISOString() };
+    meta.dateScanned = {formatted: new Date().toISOString() };
     meta.scanTagsRaw = [];
     meta.scanTags = [];
     
