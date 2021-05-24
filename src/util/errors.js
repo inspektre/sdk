@@ -4,17 +4,15 @@ const chalk = require('chalk');
 const handleErrors = (error) => {
     if(error.ApolloError) {
         process.stderr.write(chalk.red(figures.main.cross).concat("Configuration error occured.\n"));
-        process.exit(-1)
+        // process.exit(-1)
     }
     if(error.graphQLErrors) {
-        console.dir(error.graphQLErrors);
-        console.dir(error.networkError)
-        process.stderr.write(chalk.red(figures.main.cross).concat("Error occured. Try inspektre reauthorize.\n"));
-        process.exit(-1);
+        process.stderr.write(chalk.red(figures.main.cross).concat("Error occured with inspektre\n"));
+        // process.exit(-1);
     }
     if (error.networkError) {
         process.stderr.write(chalk.red(figures.main.cross).concat(" Network error occured.\n"));
-        process.exit(-1);
+        // process.exit(-1);
     }
 };
 

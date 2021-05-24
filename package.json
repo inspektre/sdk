@@ -16,7 +16,7 @@
     "node": ">=v14.13.0"
   },
   "dependencies": {
-    "@apollo/client": "^3.2.9",
+    "@apollo/client": "^3.3.15",
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
     "dotenv": "^8.2.0",
